@@ -13,7 +13,6 @@ import { BlogService } from './blogs.service';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { PostsModelDto } from '../posts/models/posts.model.dto';
 import { PostService } from '../posts/posts.service';
-import { PostViewModel } from '../posts/models/post.view.model';
 
 @Controller('api/blogs')
 export class BlogsController {
