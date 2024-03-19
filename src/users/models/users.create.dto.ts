@@ -26,6 +26,6 @@ export class CreateUserDto {
   @Prop()
   @IsNotEmpty()
   @IsEmail()
-  @Matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$\n')
+  @Matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
   email: string;
 }

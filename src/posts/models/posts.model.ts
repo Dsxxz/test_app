@@ -1,12 +1,11 @@
 import { HydratedDocument } from 'mongoose';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { LikeInfoModel } from '../../likes/likes_models/likes.info.model';
 
 export type PostDocument = HydratedDocument<PostModel>;
 @Schema()
 export class PostModel {
   @Prop()
-  id: string = '1';
+  id: string;
 
   @Prop()
   title: string;
@@ -18,21 +17,13 @@ export class PostModel {
   content: string;
 
   @Prop()
-  BlogId: string = '1';
+  blogId: string;
 
   @Prop()
-  BlogName: string = '1';
+  blogName: string;
 
   @Prop()
-  CreatedAt: string = '1';
-
-  @Prop({ type: LikeInfoModel })
-  ExtendedLikesInfo: LikeInfoModel = {
-    likesCount: [],
-    dislikeCount: [],
-    myStatus: 'None',
-    newestLikes: [],
-  };
+  createdAt: string;
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);

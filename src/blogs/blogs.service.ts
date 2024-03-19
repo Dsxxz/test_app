@@ -1,6 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BlogsRepository } from './blogs.repository';
 import { BlogCreateDto } from './models/blogs.model.dto';
+import { BlogsViewModel } from './models/blogs.view.model';
+import { ObjectId } from 'mongodb';
+import { BlogDocument } from './models/blogs.model';
 
 @Injectable()
 export class BlogService {
@@ -16,11 +19,15 @@ export class BlogService {
     return this.blogsRepository.findOne(id);
   }
 
-  async createBlog(dto: BlogCreateDto) {
+  async createBlog(dto: BlogCreateDto): Promise<BlogsViewModel> {
     return this.blogsRepository.createBlog(dto);
   }
 
   async updateBlog(id: string, dto: Partial<BlogCreateDto>) {
     return this.blogsRepository.updateBlog(id, dto);
+  }
+
+  async findBlogById(id: string): Promise<BlogDocument | null> {
+    return this.blogsRepository.findBlogById(new ObjectId(id));
   }
 }

@@ -1,12 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './models/users.create.dto';
+import { UserViewModel } from './models/user.view.model';
 
 @Controller('api/users')
 export class UsersController {
   constructor(protected userService: UsersService) {}
   @Get()
-  async getUsers() {
+  async getUsers(): Promise<UserViewModel[] | []> {
     return this.userService.getAllUsers();
   }
   @Post()
@@ -14,9 +25,14 @@ export class UsersController {
     return this.userService.createUser(createUserDto);
   }
   @Delete(':id')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  @HttpCode(204)
   async deleteUser(@Param('id') userId: string) {
-    return this.userService.deleteUserById(userId);
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+    await this.userService.deleteUserById(userId);
+    return;
   }
 
   @Get(':id')

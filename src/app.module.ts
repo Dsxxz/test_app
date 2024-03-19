@@ -14,6 +14,7 @@ import { PostsController } from './posts/posts.controller';
 import { PostService } from './posts/posts.service';
 import { PostRepository } from './posts/posts.repository';
 import { PostModel, PostSchema } from './posts/models/posts.model';
+import { DataBaseService } from './dbService/data.base.service';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { PostModel, PostSchema } from './posts/models/posts.model';
     BlogsRepository,
     PostService,
     PostRepository,
+    DataBaseService,
   ],
 })
 export class AppModule {}
