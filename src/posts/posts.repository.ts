@@ -19,10 +19,10 @@ export class PostRepository {
     return this.postModel.find();
   }
 
-  async createPost(dto: PostsModelDto) {
-    const post = this.postModel.create(dto);
+  async createPost(dto: PostsModelDto): Promise<PostModel> {
+    const post = new this.postModel(dto);
     console.log(post);
-    return post;
+    return post.save();
   }
 
   async updatePost(id: string, dto: Partial<PostsModelDto>) {

@@ -33,7 +33,7 @@ export class BlogsRepository {
     existingBlog.name = dto.name;
     existingBlog.description = dto.description;
     existingBlog.websiteUrl = dto.websiteUrl;
-
+    console.log(1);
     return existingBlog.save();
   }
 }

@@ -1,10 +1,9 @@
-import { HydratedDocument, Schema } from 'mongoose';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { LikeInfoModel } from '../../likes/likes_models/likes.info.model';
-import { BlogModel } from '../../blogs/models/blogs.model';
 
 export type PostDocument = HydratedDocument<PostModel>;
-
+@Schema()
 export class PostModel {
   @Prop()
   id: string = '1';
@@ -18,7 +17,7 @@ export class PostModel {
   @Prop()
   content: string;
 
-  @Prop({ ref: BlogModel.name })
+  @Prop()
   BlogId: string = '1';
 
   @Prop()
@@ -36,5 +35,4 @@ export class PostModel {
   };
 }
 
-export const PostSchema: Schema<PostModel> =
-  SchemaFactory.createForClass(PostModel);
+export const PostSchema = SchemaFactory.createForClass(PostModel);
