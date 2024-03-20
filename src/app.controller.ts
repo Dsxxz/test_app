@@ -15,6 +15,7 @@ export class AppController {
   }
   @Delete('testing/all-data')
   async deleteAll() {
-    await this.dataBaseService.dropAllCollections();
+    await this.dataBaseService.clearAllCollections();
+    return;
   }
 }

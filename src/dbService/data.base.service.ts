@@ -6,7 +6,12 @@ import { Connection } from 'mongoose';
 export class DataBaseService {
   constructor(@InjectConnection() private readonly connection: Connection) {}
 
-  async dropAllCollections(): Promise<void> {
-    await this.connection.db.dropDatabase();
+  async clearAllCollections(): Promise<void> {
+    const collections = await this.connection.db.listCollections().toArray();
+
+    for (const collection of collections) {
+      const colName = collection.name;
+      await this.connection.db.collection(colName).deleteMany({});
+    }
   }
 }
