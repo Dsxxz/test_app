@@ -16,9 +16,14 @@ import { PostRepository } from './posts/posts.repository';
 import { PostModel, PostSchema } from './posts/models/posts.model';
 import { DataBaseService } from './dbService/data.base.service';
 
+import * as dotenv from 'dotenv';
+dotenv.config();
+
+const mongoUri = process.env.MONGO_URL || 'mongodb://127.0.0.1:27017/test_api';
+
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://127.0.0.1:27017', { dbName: 'nest' }),
+    MongooseModule.forRoot(mongoUri, { dbName: 'nest' }),
     MongooseModule.forFeature([
       { name: UserModel.name, schema: UserSchema },
       { name: BlogModel.name, schema: BlogSchema },
