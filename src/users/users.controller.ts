@@ -13,7 +13,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
 
-@Controller('api/users')
+@Controller('/users')
 export class UsersController {
   constructor(protected userService: UsersService) {}
   @Get()

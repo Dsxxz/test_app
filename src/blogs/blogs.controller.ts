@@ -14,7 +14,7 @@ import { BlogsViewModel } from './models/blogs.view.model';
 import { PostsModelDto } from '../posts/models/posts.model.dto';
 import { PostService } from '../posts/posts.service';
 
-@Controller('api/blogs')
+@Controller('/blogs')
 export class BlogsController {
   constructor(
     private blogService: BlogService,

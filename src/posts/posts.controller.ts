@@ -10,7 +10,7 @@ import {
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
 
-@Controller('api/posts')
+@Controller('/posts')
 export class PostsController {
   constructor(protected postService: PostService) {}
 
