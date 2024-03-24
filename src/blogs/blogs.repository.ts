@@ -46,7 +46,7 @@ export class BlogsRepository {
   async createBlog(dto: BlogCreateDto): Promise<BlogsViewModel> {
     const createBlog = new this.blogModel(dto);
     createBlog.id = createBlog._id.toString();
-    createBlog.createdAt = new Date().toString();
+    createBlog.createdAt = new Date().toISOString();
     createBlog.isMembership = true;
     await createBlog.save();
     return {

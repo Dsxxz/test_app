@@ -9,14 +9,16 @@ import {
   Post,
   Put,
   Query,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { BlogCreateDto } from './models/blogs.model.dto';
 import { BlogService } from './blogs.service';
 import { BlogsViewModel } from './models/blogs.view.model';
-import { PostsModelDto } from '../posts/models/posts.model.dto';
 import { PostService } from '../posts/posts.service';
 import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
+import { PostModel } from '../posts/models/posts.model';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -63,10 +65,19 @@ export class BlogsController {
   }
 
   @Post(':id/posts')
-  async createPostForBlog(@Param('id') id: string, @Body() dto: any) {
+  async createPostForBlog(
+    @Param('id') id: string,
+    @Body() dto: any,
+    @Res() res: Response,
+  ) {
     const foundBlog = this.blogService.findBlogById(id);
-    if (!foundBlog) throw new Error('Blog must exist');
-    return this.postService.createPost({ ...dto, blogId: id } as PostsModelDto);
+    if (!foundBlog) {
+      //return HttpStatus.NOT_FOUND;
+      res
+        .status(HttpStatus.NOT_FOUND)
+        .send([{ message: 'Blog must exist', field: 'blogId' }]);
+    }
+    return this.postService.createPost({ ...dto, blogId: id } as PostModel);
   }
 
   @Get(':id/posts')
