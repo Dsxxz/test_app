@@ -5,6 +5,8 @@ import { BlogDocument, BlogModel } from './models/blogs.model';
 import { BlogCreateDto } from './models/blogs.model.dto';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { ObjectId } from 'mongodb';
+import { InputQueryDto } from '../pagination/input.query.dto';
+import { EnumDirection } from '../pagination/enum.direction';
 
 @Injectable()
 export class BlogsRepository {
@@ -74,5 +76,15 @@ export class BlogsRepository {
   }
   async saveBlog(blog: BlogDocument) {
     await blog.save();
+  }
+
+  async findByQuery(dto: InputQueryDto): Promise<BlogDocument[]> {
+    const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    return this.blogModel
+      .find()
+      .sort({ [dto.sortBy]: sd })
+      .skip((dto.pageNumber - 1) * dto.pageSize)
+      .limit(dto.pageSize)
+      .lean();
   }
 }
