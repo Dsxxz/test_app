@@ -18,7 +18,6 @@ import { BlogsViewModel } from './models/blogs.view.model';
 import { PostService } from '../posts/posts.service';
 import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
-import { PostModel } from '../posts/models/posts.model';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -70,14 +69,15 @@ export class BlogsController {
     @Body() dto: any,
     @Res() res: Response,
   ) {
-    const foundBlog = this.blogService.findBlogById(id);
+    console.log(1);
+    const foundBlog = await this.blogService.findBlogById(id);
     if (!foundBlog) {
-      //return HttpStatus.NOT_FOUND;
-      res
+      return res
         .status(HttpStatus.NOT_FOUND)
         .send([{ message: 'Blog must exist', field: 'blogId' }]);
     }
-    return this.postService.createPost({ ...dto, blogId: id } as PostModel);
+    const a = await this.postService.createPost({ ...dto, blogId: id });
+    return res.send(a);
   }
 
   @Get(':id/posts')

@@ -14,7 +14,7 @@ export class BlogModel {
   websiteUrl: string;
   @Prop()
   createdAt: string;
-  @Prop({ default: false })
+  @Prop({ default: true })
   isMembership: boolean;
 }
 

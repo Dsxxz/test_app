@@ -25,7 +25,8 @@ export class PostRepository {
     post.createdAt = new Date().toISOString();
     post.id = post._id.toString();
     post.blogName = blogName;
-    return post.save();
+    post.blogId = dto.blogId;
+    return await post.save();
   }
 
   async updatePost(id: string, dto: PostsModelDto): Promise<void> {

@@ -51,6 +51,7 @@ export class PostService {
   async findByQuery(dto: InputQueryDto): Promise<PostModel[]> {
     const posts = await this.postRepository.findByQuery(dto);
     if (!posts) return [];
+    console.log('postservice');
     return posts.map((post) => {
       return {
         id: post.id,
