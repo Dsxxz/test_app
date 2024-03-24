@@ -58,9 +58,15 @@ export class BlogsController {
     return this.blogService.updateBlog(id, dto);
   }
 
+  @HttpCode(204)
   @Delete(':id')
-  async deleteBlog(@Param('id') id: string) {
-    return id;
+  async deleteBlog(@Param('id') id: string, @Res() res: Response) {
+    const blog = await this.blogService.findBlogById(id);
+    if (!blog) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    await this.blogService.deleteBlog(id);
+    return res.sendStatus(HttpStatus.OK);
   }
 
   @Post(':id/posts')

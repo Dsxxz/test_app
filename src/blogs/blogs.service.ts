@@ -45,4 +45,8 @@ export class BlogService {
       };
     });
   }
+
+  async deleteBlog(id: string) {
+    return this.blogsRepository.deleteBlog(new ObjectId(id));
+  }
 }

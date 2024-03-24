@@ -47,7 +47,7 @@ export class BlogsRepository {
     const createBlog = new this.blogModel(dto);
     createBlog.id = createBlog._id.toString();
     createBlog.createdAt = new Date().toISOString();
-    createBlog.isMembership = true;
+    createBlog.isMembership = false;
     await createBlog.save();
     return {
       id: createBlog.id,
@@ -86,5 +86,9 @@ export class BlogsRepository {
       .skip((dto.pageNumber - 1) * dto.pageSize)
       .limit(dto.pageSize)
       .lean();
+  }
+
+  async deleteBlog(id: ObjectId) {
+    return this.blogModel.deleteOne({ _id: id });
   }
 }
