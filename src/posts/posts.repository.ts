@@ -3,6 +3,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostDocument, PostModel } from './models/posts.model';
 import { PostsModelDto } from './models/posts.model.dto';
+import { EnumDirection } from '../pagination/enum.direction';
+import { InputQueryDto } from '../pagination/input.query.dto';
 
 @Injectable()
 export class PostRepository {
@@ -64,5 +66,15 @@ export class PostRepository {
           };
         })
       : null;
+  }
+
+  async findByQuery(dto: InputQueryDto) {
+    const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    return this.postModel
+      .find()
+      .sort({ [dto.sortBy]: sd })
+      .skip((dto.pageNumber - 1) * dto.pageSize)
+      .limit(dto.pageSize)
+      .lean();
   }
 }

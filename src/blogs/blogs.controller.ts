@@ -15,9 +15,8 @@ import { BlogService } from './blogs.service';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { PostsModelDto } from '../posts/models/posts.model.dto';
 import { PostService } from '../posts/posts.service';
-import { InputQueryDto } from '../pagination/input.query.dto';
+import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
-import { EnumDirection } from '../pagination/enum.direction';
 
 @Controller('/blogs')
 export class BlogsController {
@@ -32,45 +31,19 @@ export class BlogsController {
   }
   @Get()
   async findAllBlogs(@Query() dto: InputQueryDto) {
-    let { pageNumber, pageSize, sortBy, sortDirection } = dto;
+    const pageInfo = getPageInfo(dto);
 
-    if (!dto.pageNumber) pageNumber = 1;
-    if (!dto.pageSize) pageSize = 10;
-    if (!dto.sortBy) sortBy = 'createdAt';
-    if (!dto.sortDirection) sortDirection = EnumDirection.desc;
-
-    const blogs = await this.blogService.findByQuery({
-      pageNumber,
-      pageSize,
-      sortBy,
-      sortDirection,
-    });
+    const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
     console.log(blogs);
     if (!blogs) {
       return HttpStatus.NOT_FOUND;
     }
-    const result = blogs.map((el) => {
-      return {
-        ...el,
-        extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None',
-          newestLikes: [
-            {
-              addedAt: '2024-03-24T10:19:08.848Z',
-              userId: 'string',
-              login: 'string',
-            },
-          ],
-        },
-      };
-    });
+
     return Paginator.get({
       pageNumber: dto.pageNumber,
       pageSize: dto.pageSize,
-      totalCount: result.length | 0,
-      items: result,
+      totalCount: blogs.length | 0,
+      items: blogs,
     });
   }
   @Post()

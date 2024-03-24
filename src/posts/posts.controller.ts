@@ -2,13 +2,17 @@ import {
   Body,
   Controller,
   Get,
+  Query,
   HttpCode,
   Param,
   Post,
   Put,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
+import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
+import { Paginator } from '../pagination/paginator';
 
 @Controller('/posts')
 export class PostsController {
@@ -20,8 +24,27 @@ export class PostsController {
   }
 
   @Get()
-  async findAllPosts() {
-    return this.postService.findAllPosts();
+  async findAllPosts(@Query() dto: InputQueryDto) {
+    const pageInfo = getPageInfo(dto);
+    const posts = await this.postService.findByQuery(pageInfo as InputQueryDto);
+    if (!posts) HttpStatus.OK;
+    const result = posts.map((el) => {
+      return {
+        ...el,
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: 'None',
+          newestLikes: [],
+        },
+      };
+    });
+    return Paginator.get({
+      pageNumber: dto.pageNumber,
+      pageSize: dto.pageSize,
+      totalCount: result.length | 0,
+      items: result,
+    });
   }
 
   @Post()
