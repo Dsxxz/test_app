@@ -32,7 +32,14 @@ export class UsersService {
   async findByQuery(dto: InputQueryDto): Promise<UserViewModel[]> {
     const users = await this.usersRepository.findByQuery(dto);
     if (!users) return [];
-    return users;
+    return users.map((user) => {
+      return {
+        id: user.id,
+        login: user.login,
+        email: user.email,
+        createdAt: user.createdAt,
+      };
+    });
   }
 
   async getTotalCount() {

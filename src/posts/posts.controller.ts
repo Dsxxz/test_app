@@ -68,8 +68,14 @@ export class PostsController {
   async updatePost(
     @Param('id') id: string,
     @Body() dto: Partial<PostsModelDto>,
+    @Res() res: Response,
   ) {
-    return this.postService.updatePost(id, dto);
+    const post = await this.postService.findPostById(id);
+    if (!post) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    await this.postService.updatePost(id, dto);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Delete(':id')
