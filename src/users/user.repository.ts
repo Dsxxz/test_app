@@ -77,9 +77,7 @@ export class UsersRepository {
     const filterLogin = searchLoginTerm
       ? { login: { $regex: searchLoginTerm, $options: 'i' } }
       : {};
-    const user = await this.userModel.find({
-      $or: [{ $and: [filterLogin, filterEmail] }],
-    });
+    const user = await this.userModel.find({ $or: [filterEmail, filterLogin] });
     return user.length;
   }
 }
