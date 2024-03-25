@@ -29,8 +29,8 @@ export class BlogsRepository {
       : null;
   }
 
-  async findOne(id: string): Promise<BlogsViewModel | null> {
-    const foundBlog = await this.blogModel.findOne({ id });
+  async findOne(id: ObjectId): Promise<BlogsViewModel | null> {
+    const foundBlog = await this.blogModel.findOne({ _id: id });
     return foundBlog
       ? {
           id: foundBlog.id,

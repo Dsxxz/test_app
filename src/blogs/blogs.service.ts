@@ -17,7 +17,7 @@ export class BlogService {
   }
 
   async findOne(id: string) {
-    return this.blogsRepository.findOne(id);
+    return this.blogsRepository.findOne(new ObjectId(id));
   }
 
   async createBlog(dto: BlogCreateDto): Promise<BlogsViewModel> {
