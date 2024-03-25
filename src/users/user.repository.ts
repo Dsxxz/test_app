@@ -62,9 +62,8 @@ export class UsersRepository {
     const filterLogin = dto.searchLoginTerm
       ? { login: { $regex: dto.searchLoginTerm, $options: 'i' } }
       : {};
-    console.log(1, dto.searchEmailTerm, dto.searchLoginTerm);
     return this.userModel
-      .find({ $and: [filterEmail, filterLogin] })
+      .find({ $or: [filterEmail, filterLogin] })
       .sort({ [dto.sortBy]: sd })
       .skip((dto.pageNumber - 1) * dto.pageSize)
       .limit(dto.pageSize)
@@ -79,9 +78,8 @@ export class UsersRepository {
       ? { login: { $regex: searchLoginTerm, $options: 'i' } }
       : {};
     const user = await this.userModel.find({
-      $and: [{ $and: [filterLogin, filterEmail] }],
+      $or: [{ $and: [filterLogin, filterEmail] }],
     });
-    console.log(2, user.length);
     return user.length;
   }
 }
