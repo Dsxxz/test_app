@@ -33,13 +33,14 @@ export class BlogsController {
   @Get()
   async findAllBlogs(@Query() dto: InputQueryDto) {
     const pageInfo = getPageInfo(dto);
+    const totalCount = await this.postService.getTotalCount();
 
     const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
     if (!blogs) {
       return Paginator.get({
         pageNumber: pageInfo.pageNumber,
         pageSize: pageInfo.pageSize,
-        totalCount: 0,
+        totalCount: totalCount,
         items: [],
       });
     }
@@ -47,7 +48,7 @@ export class BlogsController {
     return Paginator.get({
       pageNumber: pageInfo.pageNumber,
       pageSize: pageInfo.pageSize,
-      totalCount: blogs.length | 0,
+      totalCount: totalCount,
       items: blogs,
     });
   }
@@ -88,7 +89,6 @@ export class BlogsController {
     @Body() dto: any,
     @Res() res: Response,
   ) {
-    console.log(1);
     const foundBlog = await this.blogService.findBlogById(id);
     if (!foundBlog) {
       return res
@@ -110,16 +110,17 @@ export class BlogsController {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
     const pageInfo = getPageInfo(dto);
-    const posts = await this.postService.findByQueryForOneBlog(
-      id,
+    const totalCount = await this.postService.getTotalCount();
+    const posts = await this.postService.findByQuery(
       pageInfo as InputQueryDto,
+      id,
     );
     if (!posts) {
       return res.status(HttpStatus.OK).send(
         Paginator.get({
           pageNumber: pageInfo.pageNumber,
           pageSize: pageInfo.pageSize,
-          totalCount: 0,
+          totalCount: totalCount,
           items: [],
         }),
       );
@@ -139,7 +140,7 @@ export class BlogsController {
       Paginator.get({
         pageNumber: pageInfo.pageNumber,
         pageSize: pageInfo.pageSize,
-        totalCount: result.length | 0,
+        totalCount: totalCount,
         items: result,
       }),
     );

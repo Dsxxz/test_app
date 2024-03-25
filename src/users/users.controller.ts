@@ -24,19 +24,20 @@ export class UsersController {
     @Query() dto: Partial<InputQueryDto>,
   ): Promise<Paginator<UserViewModel[]>> {
     const pageInfo = getPageInfo(dto);
+    const totalCount = await this.userService.getTotalCount();
     const users = await this.userService.findByQuery(pageInfo as InputQueryDto);
     if (!users) {
       return Paginator.get({
         pageNumber: pageInfo.pageNumber,
         pageSize: pageInfo.pageSize,
-        totalCount: 0,
+        totalCount: totalCount,
         items: [],
       });
     }
     return Paginator.get({
       pageNumber: pageInfo.pageNumber,
       pageSize: pageInfo.pageSize,
-      totalCount: users.length | 0,
+      totalCount: totalCount,
       items: users,
     });
   }

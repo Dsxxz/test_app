@@ -34,4 +34,8 @@ export class UsersService {
     if (!users) return [];
     return users;
   }
+
+  async getTotalCount() {
+    return this.usersRepository.getTotalCount();
+  }
 }

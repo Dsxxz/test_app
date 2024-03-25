@@ -73,20 +73,17 @@ export class PostRepository {
       : null;
   }
 
-  async findByQuery(dto: InputQueryDto) {
-    const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
-    return this.postModel
-      .find()
-      .sort({ [dto.sortBy]: sd })
-      .skip((dto.pageNumber - 1) * dto.pageSize)
-      .limit(dto.pageSize)
-      .lean();
+  async getTotalCount(blogId?: string) {
+    const filter = blogId ? { blogId: blogId } : {};
+    const posts = await this.postModel.find(filter);
+    return posts.length;
   }
 
-  async findByQueryForOneBlog(blogId: string, dto: InputQueryDto) {
+  async findByQuery(dto: InputQueryDto, blogId?: string) {
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    const filter = blogId ? { blogId: blogId } : {};
     return this.postModel
-      .find({ blogId: blogId })
+      .find(filter)
       .sort({ [dto.sortBy]: sd })
       .skip((dto.pageNumber - 1) * dto.pageSize)
       .limit(dto.pageSize)

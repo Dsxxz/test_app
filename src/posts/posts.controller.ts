@@ -26,12 +26,13 @@ export class PostsController {
   @Get()
   async findAllPosts(@Query() dto: InputQueryDto) {
     const pageInfo = getPageInfo(dto);
+    const totalCount = await this.postService.getTotalCount();
     const posts = await this.postService.findByQuery(pageInfo as InputQueryDto);
     if (!posts) {
       return Paginator.get({
         pageNumber: dto.pageNumber,
         pageSize: dto.pageSize,
-        totalCount: 0,
+        totalCount: totalCount,
         items: [],
       });
     }
@@ -49,7 +50,7 @@ export class PostsController {
     return Paginator.get({
       pageNumber: pageInfo.pageNumber,
       pageSize: pageInfo.pageSize,
-      totalCount: result.length | 0,
+      totalCount: totalCount,
       items: result,
     });
   }

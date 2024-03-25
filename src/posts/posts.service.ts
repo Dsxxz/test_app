@@ -2,7 +2,6 @@ import { Inject, Injectable } from '@nestjs/common';
 import { PostRepository } from './posts.repository';
 import { PostsModelDto } from './models/posts.model.dto';
 import { BlogService } from '../blogs/blogs.service';
-import { PostModel } from './models/posts.model';
 import { InputQueryDto } from '../pagination/input.query.dto';
 import { PostViewModel } from './models/post.view.model';
 import { LikeEnum } from '../likes/likes_models/likes.enum.model';
@@ -59,34 +58,12 @@ export class PostService {
     return this.postRepository.updatePost(new ObjectId(id), dto);
   }
 
-  async findPostsForBlogBiId(id: string): Promise<any | null> {
-    return this.postRepository.findPostsForBlogBiId(id);
+  async getTotalCount(blogId?: string) {
+    return this.postRepository.getTotalCount(blogId);
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<PostViewModel[]> {
-    const posts = await this.postRepository.findByQuery(dto);
-    if (!posts) return [];
-    return posts.map((post) => {
-      return {
-        id: post.id,
-        title: post.title,
-        shortDescription: post.shortDescription,
-        content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt,
-        extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: LikeEnum.None,
-          newestLikes: [],
-        },
-      };
-    });
-  }
-
-  async findByQueryForOneBlog(blogId: string, dto: InputQueryDto) {
-    const posts = await this.postRepository.findByQueryForOneBlog(blogId, dto);
+  async findByQuery(dto: InputQueryDto, blogId?: string) {
+    const posts = await this.postRepository.findByQuery(dto, blogId);
     if (!posts) return [];
     return posts.map((post) => {
       return {

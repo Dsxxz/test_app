@@ -63,4 +63,9 @@ export class UsersRepository {
       .limit(dto.pageSize)
       .lean();
   }
+
+  async getTotalCount() {
+    const user = await this.userModel.find();
+    return user.length;
+  }
 }
