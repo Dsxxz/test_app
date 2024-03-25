@@ -32,11 +32,8 @@ export class BlogService {
     return this.blogsRepository.findBlogById(new ObjectId(id));
   }
 
-  async findByQuery(
-    dto: InputQueryDto,
-    searchNameTerm?: string,
-  ): Promise<BlogsViewModel[]> {
-    const blogs = await this.blogsRepository.findByQuery(dto, searchNameTerm);
+  async findByQuery(dto: InputQueryDto): Promise<BlogsViewModel[]> {
+    const blogs = await this.blogsRepository.findByQuery(dto);
     return blogs.map((el) => {
       return {
         id: el.id,

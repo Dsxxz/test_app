@@ -5,12 +5,13 @@ export type InputQueryDto = {
   pageSize: number;
   sortBy: string;
   sortDirection: EnumDirection;
+  searchNameTerm: string;
 };
 export function getPageInfo(dto: Partial<InputQueryDto>) {
-  const pageNumber = dto?.pageNumber || 1;
+  const pageNumber = dto.pageNumber || 1;
   const pageSize = dto?.pageSize || 10;
   const sortBy = dto?.sortBy || 'createdAt';
   const sortDirection = dto?.sortDirection || EnumDirection.desc;
-
-  return { pageNumber, pageSize, sortBy, sortDirection };
+  const searchNameTerm = dto.searchNameTerm || '';
+  return { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm };
 }

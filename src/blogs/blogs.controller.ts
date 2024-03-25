@@ -35,18 +35,11 @@ export class BlogsController {
     return res.status(HttpStatus.OK).send(blog);
   }
   @Get()
-  async findAllBlogs(
-    @Query() query: { dto: InputQueryDto; searchNameTerm?: string },
-  ) {
-    const pageInfo = getPageInfo(query.dto);
-    const totalCount = await this.blogService.getTotalCount(
-      query.searchNameTerm,
-    );
+  async findAllBlogs(@Query() dto: Partial<InputQueryDto>) {
+    const pageInfo = getPageInfo(dto);
+    const totalCount = await this.blogService.getTotalCount(dto.searchNameTerm);
 
-    const blogs = await this.blogService.findByQuery(
-      pageInfo as InputQueryDto,
-      query.searchNameTerm,
-    );
+    const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
     if (!blogs) {
       return Paginator.get({
         pageNumber: +pageInfo.pageNumber,

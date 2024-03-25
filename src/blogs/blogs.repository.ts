@@ -78,13 +78,10 @@ export class BlogsRepository {
     await blog.save();
   }
 
-  async findByQuery(
-    dto: InputQueryDto,
-    searchNameTerm?: string,
-  ): Promise<BlogDocument[]> {
+  async findByQuery(dto: InputQueryDto): Promise<BlogDocument[]> {
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
-    const filter = searchNameTerm
-      ? { name: { $regex: searchNameTerm, $options: 'i' } }
+    const filter = dto.searchNameTerm
+      ? { name: { $regex: dto.searchNameTerm, $options: 'i' } }
       : {};
     return this.blogModel
       .find(filter)
