@@ -8,7 +8,10 @@ import {
   Post,
   Put,
   HttpStatus,
+  Delete,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
 import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
@@ -59,6 +62,7 @@ export class PostsController {
   async createPostForBlog(@Body() dto: PostsModelDto) {
     return this.postService.createPost(dto);
   }
+
   @HttpCode(HttpStatus.NO_CONTENT)
   @Put(':id')
   async updatePost(
@@ -67,6 +71,17 @@ export class PostsController {
   ) {
     return this.postService.updatePost(id, dto);
   }
+
+  @Delete(':id')
+  async deletePost(@Param('id') id: string, @Res() res: Response) {
+    const post = await this.postService.findPostById(id);
+    if (!post) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    await this.postService.deletePost(id);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
+  }
+
   @HttpCode(404)
   @Get(':id/comments')
   async getCommentsForPostById() {

@@ -89,4 +89,8 @@ export class PostRepository {
       .limit(dto.pageSize)
       .lean();
   }
+
+  async deletePost(id: ObjectId) {
+    return this.postModel.deleteOne({ _id: id });
+  }
 }

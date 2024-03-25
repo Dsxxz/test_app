@@ -27,13 +27,17 @@ export class BlogsController {
   ) {}
 
   @Get(':id')
-  async findOneBlog(@Param('id') id: string) {
-    return this.blogService.findOne(id);
+  async findOneBlog(@Param('id') id: string, @Res() res: Response) {
+    const blog = await this.blogService.findOne(id);
+    if (!blog) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    return res.status(HttpStatus.OK).send(blog);
   }
   @Get()
   async findAllBlogs(@Query() dto: InputQueryDto) {
     const pageInfo = getPageInfo(dto);
-    const totalCount = await this.postService.getTotalCount();
+    const totalCount = await this.blogService.getTotalCount();
 
     const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
     if (!blogs) {
@@ -110,7 +114,7 @@ export class BlogsController {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
     const pageInfo = getPageInfo(dto);
-    const totalCount = await this.postService.getTotalCount();
+    const totalCount = await this.postService.getTotalCount(id);
     const posts = await this.postService.findByQuery(
       pageInfo as InputQueryDto,
       id,

@@ -91,4 +91,9 @@ export class BlogsRepository {
   async deleteBlog(id: ObjectId) {
     return this.blogModel.deleteOne({ _id: id });
   }
+
+  async getTotalCount() {
+    const blogs = await this.blogModel.find();
+    return blogs.length;
+  }
 }

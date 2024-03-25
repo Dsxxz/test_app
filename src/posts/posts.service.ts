@@ -83,4 +83,8 @@ export class PostService {
       };
     });
   }
+
+  async deletePost(id: string) {
+    return this.postRepository.deletePost(new ObjectId(id));
+  }
 }
