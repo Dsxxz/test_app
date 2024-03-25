@@ -32,8 +32,11 @@ export class BlogService {
     return this.blogsRepository.findBlogById(new ObjectId(id));
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<BlogsViewModel[]> {
-    const blogs = await this.blogsRepository.findByQuery(dto);
+  async findByQuery(
+    dto: InputQueryDto,
+    searchNameTerm?: string,
+  ): Promise<BlogsViewModel[]> {
+    const blogs = await this.blogsRepository.findByQuery(dto, searchNameTerm);
     return blogs.map((el) => {
       return {
         id: el.id,
@@ -50,7 +53,7 @@ export class BlogService {
     return this.blogsRepository.deleteBlog(new ObjectId(id));
   }
 
-  async getTotalCount() {
-    return this.blogsRepository.getTotalCount();
+  async getTotalCount(searchNameTerm?: string) {
+    return this.blogsRepository.getTotalCount(searchNameTerm);
   }
 }

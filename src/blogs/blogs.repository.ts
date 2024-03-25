@@ -78,10 +78,16 @@ export class BlogsRepository {
     await blog.save();
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<BlogDocument[]> {
+  async findByQuery(
+    dto: InputQueryDto,
+    searchNameTerm?: string,
+  ): Promise<BlogDocument[]> {
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    const filter = searchNameTerm
+      ? { name: { $regex: searchNameTerm, $options: 'i' } }
+      : {};
     return this.blogModel
-      .find()
+      .find(filter)
       .sort({ [dto.sortBy]: sd })
       .skip((dto.pageNumber - 1) * dto.pageSize)
       .limit(dto.pageSize)
@@ -92,8 +98,11 @@ export class BlogsRepository {
     return this.blogModel.deleteOne({ _id: id });
   }
 
-  async getTotalCount() {
-    const blogs = await this.blogModel.find();
+  async getTotalCount(searchNameTerm?: string) {
+    const filter = searchNameTerm
+      ? { name: { $regex: searchNameTerm, $options: 'i' } }
+      : {};
+    const blogs = await this.blogModel.find(filter);
     return blogs.length;
   }
 }

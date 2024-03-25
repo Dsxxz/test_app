@@ -26,8 +26,12 @@ export class PostsController {
   ) {}
 
   @Get(':id')
-  async getOnePost(@Param('id') id: string) {
-    return this.postService.findPostById(id);
+  async getOnePost(@Param('id') id: string, @Res() res: Response) {
+    const post = this.postService.findPostById(id);
+    if (!post) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    return res.status(HttpStatus.NO_CONTENT).send(post);
   }
 
   @Get()
@@ -77,7 +81,6 @@ export class PostsController {
     return res.send(post);
   }
 
-  @HttpCode(HttpStatus.NO_CONTENT)
   @Put(':id')
   async updatePost(
     @Param('id') id: string,
@@ -92,6 +95,7 @@ export class PostsController {
     return res.sendStatus(HttpStatus.NO_CONTENT);
   }
 
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async deletePost(@Param('id') id: string, @Res() res: Response) {
     const post = await this.postService.findPostById(id);
