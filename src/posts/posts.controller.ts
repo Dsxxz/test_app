@@ -27,11 +27,11 @@ export class PostsController {
 
   @Get(':id')
   async getOnePost(@Param('id') id: string, @Res() res: Response) {
-    const post = this.postService.findPostById(id);
+    const post = await this.postService.findPostById(id);
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
-    return res.status(HttpStatus.NO_CONTENT).send(post);
+    return res.status(HttpStatus.OK).send(post);
   }
 
   @Get()
