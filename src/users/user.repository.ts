@@ -5,6 +5,8 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './models/users.create.dto';
 import { ObjectId } from 'mongodb';
 import { UserViewModel } from './models/user.view.model';
+import { InputQueryDto } from '../pagination/input.query.dto';
+import { EnumDirection } from '../pagination/enum.direction';
 
 @Injectable()
 export class UsersRepository {
@@ -50,5 +52,15 @@ export class UsersRepository {
 
   async saveUser(user: UserDocument) {
     await user.save();
+  }
+
+  async findByQuery(dto: InputQueryDto) {
+    const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    return this.userModel
+      .find()
+      .sort({ [dto.sortBy]: sd })
+      .skip((dto.pageNumber - 1) * dto.pageSize)
+      .limit(dto.pageSize)
+      .lean();
   }
 }

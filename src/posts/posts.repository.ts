@@ -7,6 +7,7 @@ import { EnumDirection } from '../pagination/enum.direction';
 import { InputQueryDto } from '../pagination/input.query.dto';
 import { PostViewModel } from './models/post.view.model';
 import { LikeEnum } from '../likes/likes_models/likes.enum.model';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class PostRepository {
@@ -31,16 +32,17 @@ export class PostRepository {
     return await post.save();
   }
 
-  async updatePost(id: string, dto: PostsModelDto): Promise<void> {
-    const existingPost = await this.postModel.findById(id);
+  async updatePost(id: ObjectId, dto: Partial<PostsModelDto>): Promise<void> {
+    const existingPost = await this.postModel.findById({ _id: id });
 
     if (!existingPost) {
-      throw new Error('Blog not found');
+      throw new Error('Post not found');
     }
 
-    existingPost.title = dto.title;
-    existingPost.shortDescription = dto.shortDescription;
-    existingPost.content = dto.content;
+    if (dto.title) existingPost.title = dto.title;
+    if (dto.shortDescription)
+      existingPost.shortDescription = dto.shortDescription;
+    if (dto.content) existingPost.content = dto.content;
 
     return this.savePost(existingPost);
   }

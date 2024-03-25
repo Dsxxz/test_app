@@ -6,6 +6,7 @@ import { PostModel } from './models/posts.model';
 import { InputQueryDto } from '../pagination/input.query.dto';
 import { PostViewModel } from './models/post.view.model';
 import { LikeEnum } from '../likes/likes_models/likes.enum.model';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class PostService {
@@ -58,8 +59,8 @@ export class PostService {
     };
   }
 
-  async updatePost(id: string, dto: PostsModelDto) {
-    return this.postRepository.updatePost(id, dto);
+  async updatePost(id: string, dto: Partial<PostsModelDto>) {
+    return this.postRepository.updatePost(new ObjectId(id), dto);
   }
 
   async findPostsForBlogBiId(id: string): Promise<any | null> {

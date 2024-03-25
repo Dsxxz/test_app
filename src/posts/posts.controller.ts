@@ -46,8 +46,8 @@ export class PostsController {
       };
     });
     return Paginator.get({
-      pageNumber: dto.pageNumber,
-      pageSize: dto.pageSize,
+      pageNumber: pageInfo.pageNumber,
+      pageSize: pageInfo.pageSize,
       totalCount: result.length | 0,
       items: result,
     });
@@ -57,8 +57,11 @@ export class PostsController {
   async createPostForBlog(@Body() dto: PostsModelDto) {
     return this.postService.createPost(dto);
   }
-  @Put()
-  async updatePost(@Param('id') id: string, @Body() dto: PostsModelDto) {
+  @Put(':id')
+  async updatePost(
+    @Param('id') id: string,
+    @Body() dto: Partial<PostsModelDto>,
+  ) {
     return this.postService.updatePost(id, dto);
   }
   @HttpCode(404)

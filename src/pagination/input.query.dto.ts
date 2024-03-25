@@ -7,11 +7,10 @@ export type InputQueryDto = {
   sortDirection: EnumDirection;
 };
 export function getPageInfo(dto: Partial<InputQueryDto>) {
-  let { pageNumber, pageSize, sortBy, sortDirection } = dto;
+  const pageNumber = dto?.pageNumber || 1;
+  const pageSize = dto?.pageSize || 10;
+  const sortBy = dto?.sortBy || 'createdAt';
+  const sortDirection = dto?.sortDirection || EnumDirection.desc;
 
-  if (!dto.pageNumber) pageNumber = 1;
-  if (!dto.pageSize) pageSize = 10;
-  if (!dto.sortBy) sortBy = 'createdAt';
-  if (!dto.sortDirection) sortDirection = EnumDirection.desc;
   return { pageNumber, pageSize, sortBy, sortDirection };
 }

@@ -35,14 +35,18 @@ export class BlogsController {
     const pageInfo = getPageInfo(dto);
 
     const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
-    console.log(blogs);
     if (!blogs) {
-      return HttpStatus.NOT_FOUND;
+      return Paginator.get({
+        pageNumber: pageInfo.pageNumber,
+        pageSize: pageInfo.pageSize,
+        totalCount: 0,
+        items: [],
+      });
     }
 
     return Paginator.get({
-      pageNumber: dto.pageNumber,
-      pageSize: dto.pageSize,
+      pageNumber: pageInfo.pageNumber,
+      pageSize: pageInfo.pageSize,
       totalCount: blogs.length | 0,
       items: blogs,
     });
@@ -54,8 +58,17 @@ export class BlogsController {
 
   @Put(':id')
   @HttpCode(204)
-  async updateBlog(@Param('id') id: string, @Body() dto: BlogCreateDto) {
-    return this.blogService.updateBlog(id, dto);
+  async updateBlog(
+    @Param('id') id: string,
+    @Body() dto: BlogCreateDto,
+    @Res() res: Response,
+  ) {
+    const blog = await this.blogService.findBlogById(id);
+    if (!blog) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    await this.blogService.updateBlog(id, dto);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
@@ -66,7 +79,7 @@ export class BlogsController {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
     await this.blogService.deleteBlog(id);
-    return res.sendStatus(HttpStatus.OK);
+    return res.sendStatus(HttpStatus.NO_CONTENT);
   }
 
   @Post(':id/posts')
