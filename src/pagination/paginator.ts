@@ -11,10 +11,10 @@ export class Paginator<T> {
     items: T;
   }): Paginator<T> {
     return {
-      pagesCount: Math.ceil(data.totalCount / data.pageSize) as number,
-      page: data.pageNumber as number,
-      pageSize: data.pageSize as number,
-      totalCount: data.totalCount as number,
+      pagesCount: Math.ceil(data.totalCount / data.pageSize),
+      page: data.pageNumber,
+      pageSize: data.pageSize,
+      totalCount: data.totalCount,
       items: data.items,
     };
   }

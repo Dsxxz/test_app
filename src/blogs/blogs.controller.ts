@@ -42,17 +42,17 @@ export class BlogsController {
     const blogs = await this.blogService.findByQuery(pageInfo as InputQueryDto);
     if (!blogs) {
       return Paginator.get({
-        pageNumber: pageInfo.pageNumber,
-        pageSize: pageInfo.pageSize,
-        totalCount: totalCount,
+        pageNumber: +pageInfo.pageNumber,
+        pageSize: +pageInfo.pageSize,
+        totalCount: +totalCount,
         items: [],
       });
     }
 
     return Paginator.get({
-      pageNumber: pageInfo.pageNumber,
-      pageSize: pageInfo.pageSize,
-      totalCount: totalCount,
+      pageNumber: +pageInfo.pageNumber,
+      pageSize: +pageInfo.pageSize,
+      totalCount: +totalCount,
       items: blogs,
     });
   }
@@ -99,8 +99,8 @@ export class BlogsController {
         .status(HttpStatus.NOT_FOUND)
         .send([{ message: 'Blog must exist', field: 'blogId' }]);
     }
-    const a = await this.postService.createPost({ ...dto, blogId: id });
-    return res.send(a);
+    const post = await this.postService.createPost({ ...dto, blogId: id });
+    return res.send(post);
   }
 
   @Get(':id/posts')
@@ -122,9 +122,9 @@ export class BlogsController {
     if (!posts) {
       return res.status(HttpStatus.OK).send(
         Paginator.get({
-          pageNumber: pageInfo.pageNumber,
-          pageSize: pageInfo.pageSize,
-          totalCount: totalCount,
+          pageNumber: +pageInfo.pageNumber,
+          pageSize: +pageInfo.pageSize,
+          totalCount: +totalCount,
           items: [],
         }),
       );
@@ -142,9 +142,9 @@ export class BlogsController {
     });
     res.status(HttpStatus.OK).send(
       Paginator.get({
-        pageNumber: pageInfo.pageNumber,
-        pageSize: pageInfo.pageSize,
-        totalCount: totalCount,
+        pageNumber: +pageInfo.pageNumber,
+        pageSize: +pageInfo.pageSize,
+        totalCount: +totalCount,
         items: result,
       }),
     );

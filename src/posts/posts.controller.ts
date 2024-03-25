@@ -16,10 +16,14 @@ import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
 import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
+import { BlogService } from '../blogs/blogs.service';
 
 @Controller('/posts')
 export class PostsController {
-  constructor(protected postService: PostService) {}
+  constructor(
+    protected postService: PostService,
+    protected blogService: BlogService,
+  ) {}
 
   @Get(':id')
   async getOnePost(@Param('id') id: string) {
@@ -33,9 +37,9 @@ export class PostsController {
     const posts = await this.postService.findByQuery(pageInfo as InputQueryDto);
     if (!posts) {
       return Paginator.get({
-        pageNumber: dto.pageNumber,
-        pageSize: dto.pageSize,
-        totalCount: totalCount,
+        pageNumber: +dto.pageNumber,
+        pageSize: +dto.pageSize,
+        totalCount: +totalCount,
         items: [],
       });
     }
@@ -51,16 +55,26 @@ export class PostsController {
       };
     });
     return Paginator.get({
-      pageNumber: pageInfo.pageNumber,
-      pageSize: pageInfo.pageSize,
-      totalCount: totalCount,
+      pageNumber: +pageInfo.pageNumber,
+      pageSize: +pageInfo.pageSize,
+      totalCount: +totalCount,
       items: result,
     });
   }
 
   @Post()
-  async createPostForBlog(@Body() dto: PostsModelDto) {
-    return this.postService.createPost(dto);
+  async createPostForBlog(@Body() dto: PostsModelDto, @Res() res: Response) {
+    const foundBlog = await this.blogService.findBlogById(dto.blogId);
+    if (!foundBlog) {
+      return res
+        .status(HttpStatus.NOT_FOUND)
+        .send([{ message: 'Blog must exist', field: 'blogId' }]);
+    }
+    const post = await this.postService.createPost({
+      ...dto,
+      blogId: dto.blogId,
+    });
+    return res.send(post);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)

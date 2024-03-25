@@ -28,16 +28,16 @@ export class UsersController {
     const users = await this.userService.findByQuery(pageInfo as InputQueryDto);
     if (!users) {
       return Paginator.get({
-        pageNumber: pageInfo.pageNumber,
-        pageSize: pageInfo.pageSize,
-        totalCount: totalCount,
+        pageNumber: +pageInfo.pageNumber,
+        pageSize: +pageInfo.pageSize,
+        totalCount: +totalCount,
         items: [],
       });
     }
     return Paginator.get({
-      pageNumber: pageInfo.pageNumber,
-      pageSize: pageInfo.pageSize,
-      totalCount: totalCount,
+      pageNumber: +pageInfo.pageNumber,
+      pageSize: +pageInfo.pageSize,
+      totalCount: +totalCount,
       items: users,
     });
   }
