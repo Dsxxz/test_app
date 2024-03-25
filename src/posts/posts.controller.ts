@@ -7,7 +7,6 @@ import {
   Param,
   Post,
   Put,
-  HttpStatus,
 } from '@nestjs/common';
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
@@ -27,7 +26,14 @@ export class PostsController {
   async findAllPosts(@Query() dto: InputQueryDto) {
     const pageInfo = getPageInfo(dto);
     const posts = await this.postService.findByQuery(pageInfo as InputQueryDto);
-    if (!posts) HttpStatus.OK;
+    if (!posts) {
+      return Paginator.get({
+        pageNumber: dto.pageNumber,
+        pageSize: dto.pageSize,
+        totalCount: 0,
+        items: [],
+      });
+    }
     const result = posts.map((el) => {
       return {
         ...el,

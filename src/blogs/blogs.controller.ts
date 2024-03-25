@@ -58,7 +58,7 @@ export class BlogsController {
     return this.blogService.updateBlog(id, dto);
   }
 
-  @HttpCode(204)
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
   async deleteBlog(@Param('id') id: string, @Res() res: Response) {
     const blog = await this.blogService.findBlogById(id);
@@ -87,7 +87,12 @@ export class BlogsController {
   }
 
   @Get(':id/posts')
-  async findPostsForBlog(@Param('id') id: string): Promise<any | null> {
-    return this.postService.findPostsForBlogBiId(id);
+  async findPostsForBlog(@Param('id') id: string, @Res() res: Response) {
+    const blog = await this.blogService.findBlogById(id);
+    const posts = await this.postService.findPostsForBlogBiId(id);
+    if (!blog) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    return res.status(HttpStatus.OK).send(posts);
   }
 }

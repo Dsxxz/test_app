@@ -4,6 +4,8 @@ import { PostsModelDto } from './models/posts.model.dto';
 import { BlogService } from '../blogs/blogs.service';
 import { PostModel } from './models/posts.model';
 import { InputQueryDto } from '../pagination/input.query.dto';
+import { PostViewModel } from './models/post.view.model';
+import { LikeEnum } from '../likes/likes_models/likes.enum.model';
 
 @Injectable()
 export class PostService {
@@ -12,17 +14,8 @@ export class PostService {
     protected blogService: BlogService,
   ) {}
   async findPostById(id: string) {
-    return this.postRepository.findPostById(id);
-  }
-
-  async findAllPosts() {
-    return this.postRepository.findAllPosts();
-  }
-
-  async createPost(dto: PostsModelDto) {
-    const blog = await this.blogService.findBlogById(dto.blogId);
-    if (!blog) throw new Error('Blog must exist');
-    const post = await this.postRepository.createPost(dto, blog.name);
+    const post = await this.postRepository.findPostById(id);
+    if (!post) return null;
     return {
       id: post.id,
       title: post.title,
@@ -40,6 +33,31 @@ export class PostService {
     };
   }
 
+  async findAllPosts() {
+    return this.postRepository.findAllPosts();
+  }
+
+  async createPost(dto: PostsModelDto): Promise<PostViewModel> {
+    const blog = await this.blogService.findBlogById(dto.blogId);
+    if (!blog) throw new Error('Blog must exist');
+    const post = await this.postRepository.createPost(dto, blog.name);
+    return {
+      id: post.id,
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt,
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeEnum.None,
+        newestLikes: [],
+      },
+    };
+  }
+
   async updatePost(id: string, dto: PostsModelDto) {
     return this.postRepository.updatePost(id, dto);
   }
@@ -48,10 +66,9 @@ export class PostService {
     return this.postRepository.findPostsForBlogBiId(id);
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<PostModel[]> {
+  async findByQuery(dto: InputQueryDto): Promise<PostViewModel[]> {
     const posts = await this.postRepository.findByQuery(dto);
     if (!posts) return [];
-    console.log('postservice');
     return posts.map((post) => {
       return {
         id: post.id,
@@ -64,7 +81,7 @@ export class PostService {
         extendedLikesInfo: {
           likesCount: 0,
           dislikesCount: 0,
-          myStatus: 'None',
+          myStatus: LikeEnum.None,
           newestLikes: [],
         },
       };

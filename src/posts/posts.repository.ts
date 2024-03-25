@@ -5,6 +5,8 @@ import { PostDocument, PostModel } from './models/posts.model';
 import { PostsModelDto } from './models/posts.model.dto';
 import { EnumDirection } from '../pagination/enum.direction';
 import { InputQueryDto } from '../pagination/input.query.dto';
+import { PostViewModel } from './models/post.view.model';
+import { LikeEnum } from '../likes/likes_models/likes.enum.model';
 
 @Injectable()
 export class PostRepository {
@@ -13,7 +15,7 @@ export class PostRepository {
   ) {}
 
   async findPostById(id: string): Promise<PostDocument | null> {
-    return this.postModel.findOne({ id: id });
+    return this.postModel.findOne({ _id: id });
   }
 
   async findAllPosts(): Promise<PostModel[]> {
@@ -46,7 +48,7 @@ export class PostRepository {
     await post.save();
   }
 
-  async findPostsForBlogBiId(blogId: string): Promise<any | null> {
+  async findPostsForBlogBiId(blogId: string): Promise<PostViewModel[] | null> {
     const posts = await this.postModel.find({ blogId: blogId });
     return posts
       ? posts.map((post) => {
@@ -61,7 +63,7 @@ export class PostRepository {
             extendedLikesInfo: {
               likesCount: 0,
               dislikesCount: 0,
-              myStatus: 'None',
+              myStatus: LikeEnum.None,
               newestLikes: [],
             },
           };
