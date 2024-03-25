@@ -13,19 +13,23 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
-import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
+import { getUserPageInfo, UserQueryDto } from '../pagination/user.query.dto';
 
 @Controller('/users')
 export class UsersController {
   constructor(protected userService: UsersService) {}
   @Get()
   async getUsers(
-    @Query() dto: Partial<InputQueryDto>,
+    @Query() dto: Partial<UserQueryDto>,
   ): Promise<Paginator<UserViewModel[]>> {
-    const pageInfo = getPageInfo(dto);
-    const totalCount = await this.userService.getTotalCount();
-    const users = await this.userService.findByQuery(pageInfo as InputQueryDto);
+    const pageInfo = getUserPageInfo(dto);
+    const totalCount = await this.userService.getTotalCount(
+      pageInfo.searchLoginTerm,
+      pageInfo.searchEmailTerm,
+    );
+    console.log(pageInfo.searchLoginTerm, pageInfo.searchEmailTerm);
+    const users = await this.userService.findByQuery(pageInfo as UserQueryDto);
     if (!users) {
       return Paginator.get({
         pageNumber: +pageInfo.pageNumber,

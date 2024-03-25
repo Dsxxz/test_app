@@ -12,6 +12,6 @@ export function getPageInfo(dto: Partial<InputQueryDto>) {
   const pageSize = dto?.pageSize || 10;
   const sortBy = dto?.sortBy || 'createdAt';
   const sortDirection = dto?.sortDirection || EnumDirection.desc;
-  const searchNameTerm = dto.searchNameTerm || '';
+  const searchNameTerm = dto?.searchNameTerm || '';
   return { pageNumber, pageSize, sortBy, sortDirection, searchNameTerm };
 }

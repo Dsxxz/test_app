@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './user.repository';
 import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
-import { InputQueryDto } from '../pagination/input.query.dto';
 import { ObjectId } from 'mongodb';
+import { UserQueryDto } from '../pagination/user.query.dto';
 
 @Injectable()
 export class UsersService {
@@ -29,7 +29,7 @@ export class UsersService {
     return this.usersRepository.deleteUserById(userId);
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<UserViewModel[]> {
+  async findByQuery(dto: UserQueryDto): Promise<UserViewModel[]> {
     const users = await this.usersRepository.findByQuery(dto);
     if (!users) return [];
     return users.map((user) => {
@@ -42,7 +42,7 @@ export class UsersService {
     });
   }
 
-  async getTotalCount() {
-    return this.usersRepository.getTotalCount();
+  async getTotalCount(searchLoginTerm?: string, searchEmailTerm?: string) {
+    return this.usersRepository.getTotalCount(searchLoginTerm, searchEmailTerm);
   }
 }

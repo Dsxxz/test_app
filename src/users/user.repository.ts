@@ -5,8 +5,8 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './models/users.create.dto';
 import { ObjectId } from 'mongodb';
 import { UserViewModel } from './models/user.view.model';
-import { InputQueryDto } from '../pagination/input.query.dto';
 import { EnumDirection } from '../pagination/enum.direction';
+import { UserQueryDto } from '../pagination/user.query.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -54,18 +54,34 @@ export class UsersRepository {
     await user.save();
   }
 
-  async findByQuery(dto: InputQueryDto) {
+  async findByQuery(dto: UserQueryDto) {
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    const filterEmail = dto.searchEmailTerm
+      ? { email: { $regex: dto.searchEmailTerm, $options: 'i' } }
+      : {};
+    const filterLogin = dto.searchLoginTerm
+      ? { login: { $regex: dto.searchLoginTerm, $options: 'i' } }
+      : {};
+    console.log(1, dto.searchEmailTerm, dto.searchLoginTerm);
     return this.userModel
-      .find()
+      .find({ $and: [filterEmail, filterLogin] })
       .sort({ [dto.sortBy]: sd })
       .skip((dto.pageNumber - 1) * dto.pageSize)
       .limit(dto.pageSize)
       .lean();
   }
 
-  async getTotalCount() {
-    const user = await this.userModel.find();
+  async getTotalCount(searchLoginTerm?: string, searchEmailTerm?: string) {
+    const filterEmail = searchEmailTerm
+      ? { email: { $regex: searchEmailTerm, $options: 'i' } }
+      : {};
+    const filterLogin = searchLoginTerm
+      ? { login: { $regex: searchLoginTerm, $options: 'i' } }
+      : {};
+    const user = await this.userModel.find({
+      $and: [{ $and: [filterLogin, filterEmail] }],
+    });
+    console.log(2, user.length);
     return user.length;
   }
 }
