@@ -100,12 +100,48 @@ export class BlogsController {
   }
 
   @Get(':id/posts')
-  async findPostsForBlog(@Param('id') id: string, @Res() res: Response) {
+  async findPostsForBlog(
+    @Param('id') id: string,
+    @Res() res: Response,
+    @Query() dto: Partial<InputQueryDto>,
+  ) {
     const blog = await this.blogService.findBlogById(id);
-    const posts = await this.postService.findPostsForBlogBiId(id);
     if (!blog) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
-    return res.status(HttpStatus.OK).send(posts);
+    const pageInfo = getPageInfo(dto);
+    const posts = await this.postService.findByQueryForOneBlog(
+      id,
+      pageInfo as InputQueryDto,
+    );
+    if (!posts) {
+      return res.status(HttpStatus.OK).send(
+        Paginator.get({
+          pageNumber: pageInfo.pageNumber,
+          pageSize: pageInfo.pageSize,
+          totalCount: 0,
+          items: [],
+        }),
+      );
+    }
+    const result = posts.map((el) => {
+      return {
+        ...el,
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: 'None',
+          newestLikes: [],
+        },
+      };
+    });
+    res.status(HttpStatus.OK).send(
+      Paginator.get({
+        pageNumber: pageInfo.pageNumber,
+        pageSize: pageInfo.pageSize,
+        totalCount: result.length | 0,
+        items: result,
+      }),
+    );
   }
 }

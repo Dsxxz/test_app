@@ -42,8 +42,8 @@ export class UsersRepository {
     return [];
   }
 
-  async getUserById(userId: string) {
-    return this.userModel.findOne({ _id: new ObjectId(userId) });
+  async getUserById(userId: ObjectId) {
+    return this.userModel.findOne({ _id: userId });
   }
 
   async deleteUserById(userId: string) {

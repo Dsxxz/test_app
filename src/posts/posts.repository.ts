@@ -82,4 +82,14 @@ export class PostRepository {
       .limit(dto.pageSize)
       .lean();
   }
+
+  async findByQueryForOneBlog(blogId: string, dto: InputQueryDto) {
+    const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
+    return this.postModel
+      .find({ blogId: blogId })
+      .sort({ [dto.sortBy]: sd })
+      .skip((dto.pageNumber - 1) * dto.pageSize)
+      .limit(dto.pageSize)
+      .lean();
+  }
 }

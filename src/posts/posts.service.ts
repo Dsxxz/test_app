@@ -34,10 +34,6 @@ export class PostService {
     };
   }
 
-  async findAllPosts() {
-    return this.postRepository.findAllPosts();
-  }
-
   async createPost(dto: PostsModelDto): Promise<PostViewModel> {
     const blog = await this.blogService.findBlogById(dto.blogId);
     if (!blog) throw new Error('Blog must exist');
@@ -69,6 +65,28 @@ export class PostService {
 
   async findByQuery(dto: InputQueryDto): Promise<PostViewModel[]> {
     const posts = await this.postRepository.findByQuery(dto);
+    if (!posts) return [];
+    return posts.map((post) => {
+      return {
+        id: post.id,
+        title: post.title,
+        shortDescription: post.shortDescription,
+        content: post.content,
+        blogId: post.blogId,
+        blogName: post.blogName,
+        createdAt: post.createdAt,
+        extendedLikesInfo: {
+          likesCount: 0,
+          dislikesCount: 0,
+          myStatus: LikeEnum.None,
+          newestLikes: [],
+        },
+      };
+    });
+  }
+
+  async findByQueryForOneBlog(blogId: string, dto: InputQueryDto) {
+    const posts = await this.postRepository.findByQueryForOneBlog(blogId, dto);
     if (!posts) return [];
     return posts.map((post) => {
       return {

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
@@ -57,6 +58,7 @@ export class PostsController {
   async createPostForBlog(@Body() dto: PostsModelDto) {
     return this.postService.createPost(dto);
   }
+  @HttpCode(HttpStatus.NO_CONTENT)
   @Put(':id')
   async updatePost(
     @Param('id') id: string,
