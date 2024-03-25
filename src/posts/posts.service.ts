@@ -14,7 +14,7 @@ export class PostService {
     protected blogService: BlogService,
   ) {}
   async findPostById(id: string) {
-    const post = await this.postRepository.findPostById(id);
+    const post = await this.postRepository.findPostById(new ObjectId(id));
     if (!post) return null;
     return {
       id: post.id,

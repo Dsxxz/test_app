@@ -15,7 +15,7 @@ export class PostRepository {
     @InjectModel(PostModel.name) private postModel: Model<PostDocument>,
   ) {}
 
-  async findPostById(id: string): Promise<PostDocument | null> {
+  async findPostById(id: ObjectId): Promise<PostDocument | null> {
     return this.postModel.findOne({ _id: id });
   }
 
