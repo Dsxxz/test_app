@@ -28,7 +28,6 @@ export class UsersController {
       pageInfo.searchLoginTerm,
       pageInfo.searchEmailTerm,
     );
-    console.log(pageInfo.searchLoginTerm, pageInfo.searchEmailTerm);
     const users = await this.userService.findByQuery(pageInfo as UserQueryDto);
     if (!users) {
       return Paginator.get({
