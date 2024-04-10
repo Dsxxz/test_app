@@ -11,7 +11,7 @@ import { ObjectId } from 'mongodb';
 export class PostService {
   constructor(
     @Inject(PostRepository) private readonly postRepository: PostRepository,
-    protected blogService: BlogService,
+    @Inject(BlogService) protected blogService: BlogService,
   ) {}
   async findPostById(id: string) {
     const post = await this.postRepository.findPostById(new ObjectId(id));
