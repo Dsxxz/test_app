@@ -17,12 +17,14 @@ import { PostsModelDto } from './models/posts.model.dto';
 import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
 import { Paginator } from '../pagination/paginator';
 import { BlogService } from '../blogs/blogs.service';
+import { PostQueryRepo } from './posts.query.repo';
 
 @Controller('/posts')
 export class PostsController {
   constructor(
     protected postService: PostService,
     protected blogService: BlogService,
+    protected postQueryRepo: PostQueryRepo,
   ) {}
 
   @Get(':id')
@@ -38,7 +40,9 @@ export class PostsController {
   async findAllPosts(@Query() dto: InputQueryDto) {
     const pageInfo = getPageInfo(dto);
     const totalCount = await this.postService.getTotalCount();
-    const posts = await this.postService.findByQuery(pageInfo as InputQueryDto);
+    const posts: PostsModelDto[] = await this.postQueryRepo.findByQuery(
+      pageInfo as InputQueryDto,
+    );
     if (!posts) {
       return Paginator.get({
         pageNumber: +dto.pageNumber,

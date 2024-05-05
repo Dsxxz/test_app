@@ -4,6 +4,7 @@ export class Paginator<T> {
   public pageSize: number;
   public totalCount: number;
   public items: T;
+
   static get<T>(data: {
     pageNumber: number;
     pageSize: number;

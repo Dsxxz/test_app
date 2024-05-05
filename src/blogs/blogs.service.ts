@@ -32,20 +32,6 @@ export class BlogService {
     return this.blogsRepository.findBlogById(new ObjectId(id));
   }
 
-  async findByQuery(dto: InputQueryDto): Promise<BlogsViewModel[]> {
-    const blogs = await this.blogsRepository.findByQuery(dto);
-    return blogs.map((el) => {
-      return {
-        id: el.id,
-        name: el.name,
-        description: el.description,
-        websiteUrl: el.websiteUrl,
-        createdAt: el.createdAt,
-        isMembership: el.isMembership,
-      };
-    });
-  }
-
   async deleteBlog(id: string) {
     return this.blogsRepository.deleteBlog(new ObjectId(id));
   }

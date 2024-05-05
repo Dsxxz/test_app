@@ -17,30 +17,14 @@ export class BlogsRepository {
     const foundBlogs = await this.blogModel.find();
     return foundBlogs
       ? foundBlogs.map((blog) => {
-          return {
-            id: blog.id,
-            name: blog.name,
-            description: blog.description,
-            websiteUrl: blog.websiteUrl,
-            createdAt: blog.createdAt,
-            isMembership: blog.isMembership,
-          };
+          return this.convertToViewModel(blog);
         })
       : null;
   }
 
   async findOne(id: ObjectId): Promise<BlogsViewModel | null> {
     const foundBlog = await this.blogModel.findOne({ _id: id });
-    return foundBlog
-      ? {
-          id: foundBlog.id,
-          name: foundBlog.name,
-          description: foundBlog.description,
-          websiteUrl: foundBlog.websiteUrl,
-          createdAt: foundBlog.createdAt,
-          isMembership: foundBlog.isMembership,
-        }
-      : null;
+    return foundBlog ? this.convertToViewModel(foundBlog) : null;
   }
 
   async createBlog(dto: BlogCreateDto): Promise<BlogsViewModel> {
@@ -49,14 +33,7 @@ export class BlogsRepository {
     createBlog.createdAt = new Date().toISOString();
     createBlog.isMembership = false;
     await createBlog.save();
-    return {
-      id: createBlog.id,
-      name: createBlog.name,
-      description: createBlog.description,
-      websiteUrl: createBlog.websiteUrl,
-      createdAt: createBlog.createdAt,
-      isMembership: createBlog.isMembership,
-    };
+    return this.convertToViewModel(createBlog);
   }
   async findBlogById(id: ObjectId): Promise<BlogDocument | null> {
     return this.blogModel.findOne({ _id: id });
@@ -101,5 +78,15 @@ export class BlogsRepository {
       : {};
     const blogs = await this.blogModel.find(filter);
     return blogs.length;
+  }
+  convertToViewModel(blog: BlogModel) {
+    return {
+      id: blog.id,
+      name: blog.name,
+      description: blog.description,
+      websiteUrl: blog.websiteUrl,
+      createdAt: blog.createdAt,
+      isMembership: blog.isMembership,
+    };
   }
 }

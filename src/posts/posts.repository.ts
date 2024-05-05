@@ -54,21 +54,7 @@ export class PostRepository {
     const posts = await this.postModel.find({ blogId: blogId });
     return posts
       ? posts.map((post) => {
-          return {
-            id: post.id,
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt,
-            extendedLikesInfo: {
-              likesCount: 0,
-              dislikesCount: 0,
-              myStatus: LikeEnum.None,
-              newestLikes: [],
-            },
-          };
+          return this.convertToViewModel(post);
         })
       : null;
   }
@@ -92,5 +78,22 @@ export class PostRepository {
 
   async deletePost(id: ObjectId) {
     return this.postModel.deleteOne({ _id: id });
+  }
+  convertToViewModel(post: PostModel) {
+    return {
+      id: post.id,
+      title: post.title,
+      shortDescription: post.shortDescription,
+      content: post.content,
+      blogId: post.blogId,
+      blogName: post.blogName,
+      createdAt: post.createdAt,
+      extendedLikesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeEnum.None,
+        newestLikes: [],
+      },
+    };
   }
 }
