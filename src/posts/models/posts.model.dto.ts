@@ -18,5 +18,7 @@ export class PostsModelDto {
   @MaxLength(1000)
   content: string;
   @Prop()
+  @IsNotEmpty()
+  @IsString()
   blogId: string;
 }
