@@ -14,14 +14,16 @@ export class PostService {
   async findPostById(id: string) {
     const post = await this.postRepository.findPostById(new ObjectId(id));
     if (!post) return null;
-    return this.postRepository.convertToViewModel(post);
+    return this.postRepository.convertToViewModel([post]);
   }
 
   async createPost(dto: PostsModelDto): Promise<PostViewModel> {
     const blog = await this.blogService.findBlogById(dto.blogId);
-    if (!blog) throw new Error('Blog must exist');
+    if (!blog) {
+      throw new Error('Blog must exist');
+    }
     const post = await this.postRepository.createPost(dto, blog.name);
-    return this.postRepository.convertToViewModel(post);
+    return this.postRepository.convertToViewModelUtility(post);
   }
 
   async updatePost(id: string, dto: Partial<PostsModelDto>) {

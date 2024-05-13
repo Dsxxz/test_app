@@ -14,10 +14,10 @@ import {
 import { Response } from 'express';
 import { PostService } from './posts.service';
 import { PostsModelDto } from './models/posts.model.dto';
-import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
-import { Paginator } from '../pagination/paginator';
+import { InputQueryDto } from '../pagination/input.query.dto';
 import { BlogService } from '../blogs/blogs.service';
 import { PostQueryRepo } from './posts.query.repo';
+import { PostViewModel } from './models/post.view.model';
 
 @Controller('/posts')
 export class PostsController {
@@ -37,37 +37,18 @@ export class PostsController {
   }
 
   @Get()
-  async findAllPosts(@Query() dto: InputQueryDto) {
-    const pageInfo = getPageInfo(dto);
-    const totalCount = await this.postService.getTotalCount();
-    const posts: PostsModelDto[] = await this.postQueryRepo.findByQuery(
-      pageInfo as InputQueryDto,
+  async findAllPosts(@Query() dto: InputQueryDto, @Res() res: Response) {
+    const queryPostDto = await this.postQueryRepo.getPageInfo(dto);
+    const posts: PostsModelDto[] =
+      await this.postQueryRepo.findByQuery(queryPostDto);
+    if (!posts) res.sendStatus(HttpStatus.NOT_FOUND);
+    const result: PostViewModel | PostViewModel[] =
+      this.postQueryRepo.convertToViewModel(posts);
+    const response = this.postQueryRepo.convertToViewPagination(
+      queryPostDto,
+      result,
     );
-    if (!posts) {
-      return Paginator.get({
-        pageNumber: +dto.pageNumber,
-        pageSize: +dto.pageSize,
-        totalCount: +totalCount,
-        items: [],
-      });
-    }
-    const result = posts.map((el) => {
-      return {
-        ...el,
-        extendedLikesInfo: {
-          likesCount: 0,
-          dislikesCount: 0,
-          myStatus: 'None',
-          newestLikes: [],
-        },
-      };
-    });
-    return Paginator.get({
-      pageNumber: +pageInfo.pageNumber,
-      pageSize: +pageInfo.pageSize,
-      totalCount: +totalCount,
-      items: result,
-    });
+    return res.send(response);
   }
 
   @Post()

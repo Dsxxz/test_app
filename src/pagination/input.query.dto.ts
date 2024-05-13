@@ -7,6 +7,15 @@ export type InputQueryDto = {
   sortDirection: EnumDirection;
   searchNameTerm: string;
 };
+
+export type QueryPostDto = {
+  pageNumber: number;
+  pageSize: number;
+  sortBy: string;
+  sortDirection: EnumDirection;
+  searchNameTerm: string;
+  totalCount: number;
+};
 export function getPageInfo(dto: Partial<InputQueryDto>) {
   const pageNumber = dto.pageNumber || 1;
   const pageSize = dto?.pageSize || 10;
