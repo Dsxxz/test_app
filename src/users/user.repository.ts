@@ -42,7 +42,7 @@ export class UsersRepository {
     return [];
   }
 
-  async getUserById(userId: ObjectId) {
+  async findUserById(userId: ObjectId) {
     return this.userModel.findOne({ _id: userId });
   }
 
@@ -79,5 +79,18 @@ export class UsersRepository {
       : {};
     const user = await this.userModel.find({ $or: [filterEmail, filterLogin] });
     return user.length;
+  }
+
+  async findOne(loginOrEmail: string) {
+    return this.userModel.findOne({
+      $or: [
+        {
+          login: loginOrEmail,
+        },
+        {
+          email: loginOrEmail,
+        },
+      ],
+    });
   }
 }

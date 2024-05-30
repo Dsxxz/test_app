@@ -13,8 +13,8 @@ export class UsersService {
     return this.usersRepository.createUser(createDto);
   }
 
-  async getUserById(userId: string) {
-    const user = await this.usersRepository.getUserById(new ObjectId(userId));
+  async findUserById(userId: string) {
+    const user = await this.usersRepository.findUserById(new ObjectId(userId));
     return user
       ? {
           id: user.id,
@@ -44,5 +44,9 @@ export class UsersService {
 
   async getTotalCount(searchLoginTerm?: string, searchEmailTerm?: string) {
     return this.usersRepository.getTotalCount(searchLoginTerm, searchEmailTerm);
+  }
+
+  async findOne(loginOrEmail: string) {
+    return this.usersRepository.findOne(loginOrEmail);
   }
 }

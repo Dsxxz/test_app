@@ -13,6 +13,10 @@ export class UserModel {
   email: string;
   @Prop()
   createdAt: string;
+  @Prop()
+  userPasswordHash: string;
+  @Prop()
+  userPasswordSalt: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);
