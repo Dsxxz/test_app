@@ -1,5 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { InputQueryDto, QueryPostDto } from '../pagination/input.query.dto';
+import {
+  InputQueryDto,
+  QueryPostDto,
+} from '../helpers/pagination/input.query.dto';
 import { PostRepository } from './posts.repository';
 import { PostModel } from './models/posts.model';
 import { PostViewModel } from './models/post.view.model';

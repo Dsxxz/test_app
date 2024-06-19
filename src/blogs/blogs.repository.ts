@@ -5,8 +5,8 @@ import { BlogDocument, BlogModel } from './models/blogs.model';
 import { BlogCreateDto } from './models/blogs.model.dto';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { ObjectId } from 'mongodb';
-import { InputQueryDto } from '../pagination/input.query.dto';
-import { EnumDirection } from '../pagination/enum.direction';
+import { InputQueryDto } from '../helpers/pagination/input.query.dto';
+import { EnumDirection } from '../helpers/pagination/enum.direction';
 
 @Injectable()
 export class BlogsRepository {

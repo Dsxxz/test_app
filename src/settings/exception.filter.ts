@@ -23,7 +23,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
 
       if (typeof responseBody.message !== 'string') {
-        responseBody.message.forEach((m) =>
+        responseBody.message.forEach((m: any) =>
           errorsResponse.errorsMessages.push(m),
         );
         response.status(status).json(errorsResponse);

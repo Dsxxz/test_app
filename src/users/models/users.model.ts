@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { UserConfirmationType } from './user.confirmation.model';
 
 export type UserDocument = HydratedDocument<UserModel>;
 
@@ -17,6 +18,8 @@ export class UserModel {
   userPasswordHash: string;
   @Prop()
   userPasswordSalt: string;
+  @Prop()
+  emailConfirmation: UserConfirmationType;
 }
 
 export const UserSchema = SchemaFactory.createForClass(UserModel);

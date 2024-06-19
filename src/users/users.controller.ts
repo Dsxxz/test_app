@@ -13,8 +13,11 @@ import {
 import { UsersService } from './users.service';
 import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
-import { Paginator } from '../pagination/paginator';
-import { getUserPageInfo, UserQueryDto } from '../pagination/user.query.dto';
+import { Paginator } from '../helpers/pagination/paginator';
+import {
+  getUserPageInfo,
+  UserQueryDto,
+} from '../helpers/pagination/user.query.dto';
 
 @Controller('/users')
 export class UsersController {

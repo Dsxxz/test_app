@@ -4,7 +4,7 @@ import { BlogCreateDto } from './models/blogs.model.dto';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { ObjectId } from 'mongodb';
 import { BlogDocument } from './models/blogs.model';
-import { InputQueryDto } from '../pagination/input.query.dto';
+import { InputQueryDto } from '../helpers/pagination/input.query.dto';
 
 @Injectable()
 export class BlogService {

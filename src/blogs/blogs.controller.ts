@@ -16,8 +16,11 @@ import { BlogCreateDto } from './models/blogs.model.dto';
 import { BlogService } from './blogs.service';
 import { BlogsViewModel } from './models/blogs.view.model';
 import { PostService } from '../posts/posts.service';
-import { getPageInfo, InputQueryDto } from '../pagination/input.query.dto';
-import { Paginator } from '../pagination/paginator';
+import {
+  getPageInfo,
+  InputQueryDto,
+} from '../helpers/pagination/input.query.dto';
+import { Paginator } from '../helpers/pagination/paginator';
 import { BlogQueryRepo } from './blog.query.repo';
 import { PostQueryRepo } from '../posts/posts.query.repo';
 

@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BlogsRepository } from './blogs.repository';
-import { InputQueryDto } from '../pagination/input.query.dto';
+import { InputQueryDto } from '../helpers/pagination/input.query.dto';
 import { BlogsViewModel } from './models/blogs.view.model';
 
 @Injectable()

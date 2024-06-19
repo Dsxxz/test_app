@@ -3,16 +3,16 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { PostDocument, PostModel } from './models/posts.model';
 import { PostsModelDto } from './models/posts.model.dto';
-import { EnumDirection } from '../pagination/enum.direction';
+import { EnumDirection } from '../helpers/pagination/enum.direction';
 import {
   getPageInfo,
   InputQueryDto,
   QueryPostDto,
-} from '../pagination/input.query.dto';
+} from '../helpers/pagination/input.query.dto';
 import { PostViewModel } from './models/post.view.model';
 import { LikeEnum } from '../likes/likes_models/likes.enum.model';
 import { ObjectId } from 'mongodb';
-import { Paginator } from '../pagination/paginator';
+import { Paginator } from '../helpers/pagination/paginator';
 
 @Injectable()
 export class PostRepository {
