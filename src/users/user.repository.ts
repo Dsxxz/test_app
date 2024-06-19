@@ -8,8 +8,7 @@ import { UserViewModel } from './models/user.view.model';
 import { EnumDirection } from '../helpers/pagination/enum.direction';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
 import bcrypt from 'bcrypt';
-import addDuration from 'date-fns-duration';
-
+import { add } from 'date-fns';
 @Injectable()
 export class UsersRepository {
   constructor(
@@ -26,7 +25,7 @@ export class UsersRepository {
       passwordSalt,
     );
     createUser.emailConfirmation.confirmationCode = createUser.id;
-    createUser.emailConfirmation.expirationDate = addDuration(new Date(), {
+    createUser.emailConfirmation.expirationDate = add(new Date(), {
       minutes: 5,
     });
     createUser.emailConfirmation.isConfirmed = false;

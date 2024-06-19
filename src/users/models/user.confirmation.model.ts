@@ -1,5 +1,5 @@
 export type UserConfirmationType = {
   confirmationCode: string;
-  expirationDate: string;
+  expirationDate: Date;
   isConfirmed: boolean;
 };
