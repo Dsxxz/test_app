@@ -7,11 +7,9 @@ import {
   HttpStatus,
   HttpCode,
   Res,
-  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-//import { LocalAuthGuard } from './guards/local.auth.guard';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
