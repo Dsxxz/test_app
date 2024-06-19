@@ -18,7 +18,7 @@ export class UserModel {
   userPasswordHash: string;
   @Prop()
   userPasswordSalt: string;
-  @Prop()
+  @Prop({ type: Object })
   emailConfirmation: UserConfirmationType;
 }
 
