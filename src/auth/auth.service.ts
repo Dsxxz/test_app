@@ -79,7 +79,7 @@ export class AuthService {
     }
   }
 
-  // async registrate(loginUserDTO: CreateAuthDto) {
-  //   return Promise.resolve(undefined);
-  // }
+  async registrate(loginUserDTO: CreateAuthDto) {
+    return loginUserDTO;
+  }
 }
