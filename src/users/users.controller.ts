@@ -25,7 +25,6 @@ import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 export class UsersController {
   constructor(protected userService: UsersService) {}
   @Get()
-  @UseGuards(BasicAuthGuard)
   async getUsers(
     @Query() dto: Partial<UserQueryDto>,
   ): Promise<Paginator<UserViewModel[]>> {
