@@ -19,6 +19,7 @@ import {
   getUserPageInfo,
   UserQueryDto,
 } from '../helpers/pagination/user.query.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
 @Controller('/users')
@@ -50,12 +51,13 @@ export class UsersController {
     });
   }
   @Post()
+  @UseGuards(BasicAuthGuard)
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(BasicAuthGuard)
+  @UseGuards(JwtAuthGuard)
   async deleteUser(@Param('id') userId: string) {
     const user = await this.userService.findUserById(userId);
     if (!user) {
