@@ -44,11 +44,12 @@ export class PostsController {
     if (!posts) res.sendStatus(HttpStatus.NOT_FOUND);
     const result: PostViewModel | PostViewModel[] =
       this.postQueryRepo.convertToViewModel(posts);
-    const response = this.postQueryRepo.convertToViewPagination(
+    const result1 = await this.postQueryRepo.convertToViewPagination(
       queryPostDto,
       result,
     );
-    return res.send(response);
+    console.log(result1);
+    return res.send(result1);
   }
 
   @Post()
