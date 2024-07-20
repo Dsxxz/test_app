@@ -16,13 +16,13 @@ export class PostQueryRepo {
   async findByQuery(
     dto: InputQueryDto,
     blogId?: string,
-  ): Promise<PostViewModel[] | []> {
+  ): Promise<[] | PostViewModel[]> {
     const posts = await this.postRepository.findByQuery(dto, blogId);
     if (!posts) return [];
     return this.postRepository.convertToViewModel(posts);
   }
 
-  convertToViewPagination(
+  async convertToViewPagination(
     dto: QueryPostDto,
     items: PostViewModel | PostViewModel[],
   ) {

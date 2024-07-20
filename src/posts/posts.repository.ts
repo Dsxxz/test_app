@@ -90,7 +90,7 @@ export class PostRepository {
       },
     };
   }
-  convertToViewModel(posts: PostModel[]) {
+  convertToViewModel(posts: PostModel[]): PostViewModel[] {
     return posts.map((el) => this.convertToViewModelUtility(el));
   }
 
