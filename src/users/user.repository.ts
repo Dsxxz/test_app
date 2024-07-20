@@ -17,19 +17,27 @@ export class UsersRepository {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserViewModel> {
     const passwordSalt: string = await bcrypt.genSalt(10);
-    const createUser = new this.userModel(createUserDto);
-    createUser.createdAt = new Date().toISOString();
-    createUser.id = createUser._id.toString();
-    createUser.userPasswordHash = await this.generateHash(
+    const passwordHash = await this.generateHash(
       createUserDto.password,
       passwordSalt,
     );
-    createUser.emailConfirmation.confirmationCode = createUser.id;
-    createUser.emailConfirmation.expirationDate = add(new Date(), {
-      minutes: 5,
+    const createdAt = new Date().toISOString();
+
+    const createUser = new this.userModel({
+      login: createUserDto.login,
+      email: createUserDto.email,
+      password: passwordHash,
+      createdAt: createdAt,
+      emailConfirmation: {
+        confirmationCode: createUserDto.login,
+        isConfirmed: false,
+        expirationDate: add(new Date(), {
+          minutes: 5,
+        }),
+      },
     });
-    createUser.emailConfirmation.isConfirmed = false;
-    createUser.userPasswordSalt = passwordSalt;
+    console.log(createUser);
+
     await this.saveUser(createUser);
     return {
       id: createUser.id,
