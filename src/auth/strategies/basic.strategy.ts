@@ -3,11 +3,11 @@ import { Strategy } from 'passport-local';
 import { UnauthorizedException } from '@nestjs/common';
 import { basicConstants } from '../constants/basicConstants';
 
-export class BasicStrategy extends PassportStrategy(Strategy) {
+export class BasicStrategy extends PassportStrategy(Strategy, 'basic') {
   constructor() {
     super();
   }
-  validate(username: string, password: string) {
+  async validate(username: string, password: string) {
     if (
       basicConstants.username === username &&
       basicConstants.password === password

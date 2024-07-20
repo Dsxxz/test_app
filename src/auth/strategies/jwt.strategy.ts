@@ -15,7 +15,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    const user = await this.userService.findUserById(payload.sub); // Предположим, что метод findById находится в UsersService и позволяет найти пользователя по id
+    const user = await this.userService.findUserById(payload.sub);
 
     if (!user) {
       throw new UnauthorizedException();

@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { jwtConstants } from './constants/jwtConstants';
 import { MailAdapter } from '../infrastructure/mail.adapter';
+import { BasicStrategy } from './strategies/basic.strategy';
 
 @Module({
   imports: [
@@ -19,6 +20,12 @@ import { MailAdapter } from '../infrastructure/mail.adapter';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy, LocalStrategy, MailAdapter],
+  providers: [
+    AuthService,
+    JwtStrategy,
+    LocalStrategy,
+    MailAdapter,
+    BasicStrategy,
+  ],
 })
 export class AuthModule {}
