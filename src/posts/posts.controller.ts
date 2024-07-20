@@ -48,7 +48,6 @@ export class PostsController {
       queryPostDto,
       result,
     );
-    console.log(result1);
     return res.send(result1);
   }
 
