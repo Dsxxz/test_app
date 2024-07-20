@@ -36,7 +36,6 @@ export class UsersRepository {
         }),
       },
     });
-    console.log(createUser);
 
     await this.saveUser(createUser);
     return {
