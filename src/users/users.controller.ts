@@ -9,6 +9,7 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './models/users.create.dto';
@@ -18,11 +19,13 @@ import {
   getUserPageInfo,
   UserQueryDto,
 } from '../helpers/pagination/user.query.dto';
+import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
 @Controller('/users')
 export class UsersController {
   constructor(protected userService: UsersService) {}
   @Get()
+  @UseGuards(BasicAuthGuard)
   async getUsers(
     @Query() dto: Partial<UserQueryDto>,
   ): Promise<Paginator<UserViewModel[]>> {
@@ -48,11 +51,13 @@ export class UsersController {
     });
   }
   @Post()
+  @UseGuards(BasicAuthGuard)
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
   @Delete(':id')
   @HttpCode(204)
+  @UseGuards(BasicAuthGuard)
   async deleteUser(@Param('id') userId: string) {
     const user = await this.userService.findUserById(userId);
     if (!user) {

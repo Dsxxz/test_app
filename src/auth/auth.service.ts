@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants/constants';
+import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
 import { CreateAuthDto } from './dto/create-auth.dto';
