@@ -27,7 +27,7 @@ export class AuthController {
     @Body() registrateDTO: CreateAuthDto,
     @Res() res: Response,
   ) {
-    const user = await this.userService.findOne(registrateDTO.email);
+    const user = await this.userService.findOne(registrateDTO.loginOrEmail);
     if (!user) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
