@@ -36,6 +36,7 @@ export class UsersRepository {
         }),
       },
     });
+    createUser.id = createUser._id.toString();
 
     await this.saveUser(createUser);
     return {
