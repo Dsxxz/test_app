@@ -5,7 +5,10 @@ import { basicConstants } from '../constants/basicConstants';
 
 export class BasicStrategy extends PassportStrategy(Strategy, 'basic') {
   constructor() {
-    super();
+    super({
+      usernameField: 'username',
+      passwordField: 'password',
+    });
   }
   async validate(username: string, password: string) {
     if (
