@@ -50,7 +50,6 @@ export class UsersController {
     });
   }
   @Post()
-  @UseGuards(BasicAuthGuard)
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
