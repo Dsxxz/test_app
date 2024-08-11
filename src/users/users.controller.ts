@@ -19,7 +19,6 @@ import {
   getUserPageInfo,
   UserQueryDto,
 } from '../helpers/pagination/user.query.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
 @Controller('/users')
@@ -51,6 +50,7 @@ export class UsersController {
     });
   }
   @Post()
+  @UseGuards(BasicAuthGuard)
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
