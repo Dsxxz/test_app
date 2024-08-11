@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CreateUserDto } from '../users/models/users.create.dto';
 
 @Injectable()
 export class AuthService {
@@ -79,7 +79,17 @@ export class AuthService {
     }
   }
 
-  async registrate(loginUserDTO: CreateAuthDto) {
-    return loginUserDTO;
+  async registrate(loginUserDTO: CreateUserDto) {
+    const user = await this.usersService.findOne(loginUserDTO.email);
+    if (!user) {
+      throw new HttpException(
+        'something went wrong while registering the user',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return this.mailService.sendConfirmCode(
+      user.email,
+      user.emailConfirmation.confirmationCode,
+    );
   }
 }

@@ -14,6 +14,7 @@ import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
+import { CreateUserDto } from '../users/models/users.create.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -29,7 +30,7 @@ export class AuthController {
   ) {
     const user = await this.userService.findOne(registrateDTO.loginOrEmail);
     if (!user) {
-      return res.sendStatus(HttpStatus.NOT_FOUND);
+      return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
     res.cookie('accessToken', token.access_token, {
@@ -39,8 +40,10 @@ export class AuthController {
     return res.send(token);
   }
   @Post('registration')
-  async registrate(@Body() loginUserDTO: CreateAuthDto) {
-    return this.authService.registrate(loginUserDTO);
+  @HttpCode(204)
+  async registrate(@Body() loginUserDTO: CreateUserDto) {
+    await this.userService.createUser(loginUserDTO);
+    return await this.authService.registrate(loginUserDTO);
   }
 
   @Post('registration-confirmation')
