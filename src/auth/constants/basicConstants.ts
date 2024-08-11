@@ -1,4 +1,4 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-export const basicConstants = { username: 'admin', password: 'qwerty' };
+export const basicConstants = { username: 'admin', password: 'qwert' };
