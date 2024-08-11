@@ -62,4 +62,9 @@ export class UsersService {
   async updateConfirmationIsConfirmed(code: string) {
     return this.usersRepository.updateConfirmationIsConfirmed(code);
   }
+  async checkUserForRegistrate(loginOrEmail: string) {
+    const user = this.findOne(loginOrEmail);
+    if (!user) {
+    }
+  }
 }

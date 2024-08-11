@@ -51,13 +51,12 @@ export class UsersController {
     });
   }
   @Post()
-  @UseGuards(BasicAuthGuard)
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
   @Delete(':id')
   @HttpCode(204)
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async deleteUser(@Param('id') userId: string) {
     const user = await this.userService.findUserById(userId);
     if (!user) {
