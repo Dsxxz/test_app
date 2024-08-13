@@ -8,7 +8,7 @@ export class MailAdapter {
   async sendConfirmCode(email: string, confirmationCode: string) {
     await this.mailService.sendMail({
       to: email,
-      from: 'app.nest',
+      from: 'test_app',
       subject: 'Registration confirmation',
       html:
         '<h1>Thanks for your registration</h1>\n' +
@@ -21,7 +21,7 @@ export class MailAdapter {
   async sendPasswordRecovery(email: string, recoveryCode: string) {
     await this.mailService.sendMail({
       to: email,
-      from: 'app.nest',
+      from: 'test_app',
       subject: 'password recovery',
       html:
         `<h1>Password recovery</h1>` +

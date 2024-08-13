@@ -9,8 +9,8 @@ export class BasicStrategy extends PassportStrategy(Strategy, 'basic') {
   }
   public async validate(username: string, password: string) {
     if (
-      basicConstants.username === username &&
-      basicConstants.password === password
+      basicConstants.Username === username &&
+      basicConstants.Password === password
     ) {
       return true;
     }
