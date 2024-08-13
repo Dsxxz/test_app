@@ -30,6 +30,7 @@ export class AuthController {
   ) {
     const user = await this.userService.findOne(registrateDTO.loginOrEmail);
     if (!user) {
+      console.log(user);
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
