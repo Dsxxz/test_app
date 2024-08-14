@@ -76,11 +76,11 @@ export class AuthService {
   }
 
   async registrate(loginUserDTO: CreateUserDto) {
-    const existUser =
-      await this.usersService.checkForExistingUser(loginUserDTO);
-    if (existUser) {
-      throw new HttpException('user already exists', HttpStatus.BAD_REQUEST);
-    }
+    // const existUser =
+    //   await this.usersService.checkForExistingUser(loginUserDTO);
+    // if (existUser) {
+    //   throw new HttpException('user already exists', HttpStatus.BAD_REQUEST);
+    // }
     const newUser = await this.usersService.createUser(loginUserDTO);
     const regUser = await this.usersService.findOne(newUser.email);
     if (!regUser) {
@@ -88,6 +88,7 @@ export class AuthService {
     }
     try {
       await this.usersService.registrateConfirmCode(regUser.id);
+      await this.mailService.sendConfirmCode(newUser.email, regUser.email);
     } catch (e) {
       console.log(e);
     }
