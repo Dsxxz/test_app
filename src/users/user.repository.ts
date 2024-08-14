@@ -9,7 +9,6 @@ import { EnumDirection } from '../helpers/pagination/enum.direction';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
 import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
-import { isLogLevelEnabled } from '@nestjs/common/services/utils';
 @Injectable()
 export class UsersRepository {
   constructor(
@@ -41,7 +40,6 @@ export class UsersRepository {
     createUser.id = createUser._id.toString();
 
     await this.saveUser(createUser);
-    console.log(createUser);
     return {
       id: createUser.id,
       login: createUser.login,
@@ -144,6 +142,7 @@ export class UsersRepository {
     user.emailConfirmation.expirationDate = add(new Date(), {
       minutes: 5,
     });
+    user.emailConfirmation.isConfirmed = true;
     await this.saveUser(user);
     return user;
   }

@@ -81,9 +81,19 @@ export class AuthService {
   async registrate(loginUserDTO: CreateUserDto) {
     const user = await this.usersService.findOne(loginUserDTO.email);
     if (!user) {
-      throw new HttpException(
-        'something went wrong while registering the user',
-        HttpStatus.BAD_REQUEST,
+      const newUser = await this.usersService.createUser(loginUserDTO);
+      const regUser = await this.usersService.findOne(newUser.email);
+      if (!regUser) {
+        throw new Error('something went wrong while registration');
+      }
+      try {
+        await this.usersService.registrateConfirmCode(regUser.id);
+      } catch (e) {
+        console.log(e);
+      }
+      return await this.mailService.sendConfirmCode(
+        regUser.email,
+        regUser.emailConfirmation.confirmationCode,
       );
     }
     try {
