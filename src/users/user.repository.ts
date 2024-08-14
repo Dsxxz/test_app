@@ -29,7 +29,7 @@ export class UsersRepository {
       password: passwordHash,
       createdAt: createdAt,
       emailConfirmation: {
-        confirmationCode: createUserDto.login,
+        confirmationCode: null,
         isConfirmed: false,
         expirationDate: add(new Date(), {
           minutes: 5,
@@ -125,5 +125,22 @@ export class UsersRepository {
         },
       ],
     });
+  }
+
+  async checkIsCorrectCode(code: string) {
+    const user = await this.userModel.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+    console.log(user);
+    return !!user;
+  }
+
+  async registrateConfirmCode(user: UserDocument, code: string) {
+    user.emailConfirmation.confirmationCode = code;
+    user.emailConfirmation.expirationDate = add(new Date(), {
+      minutes: 5,
+    });
+    await this.saveUser(user);
+    return user;
   }
 }

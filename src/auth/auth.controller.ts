@@ -29,7 +29,6 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.userService.findOne(registrateDTO.loginOrEmail);
-    console.log(user);
     if (!user) {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }

@@ -25,6 +25,9 @@ export class UsersService {
       : null;
   }
 
+  async checkIsCorrectCode(code: string) {
+    return this.usersRepository.checkIsCorrectCode(code);
+  }
   async deleteUserById(userId: string) {
     return this.usersRepository.deleteUserById(userId);
   }
@@ -66,5 +69,13 @@ export class UsersService {
     const user = this.findOne(loginOrEmail);
     if (!user) {
     }
+  }
+
+  async registrateConfirmCode(id: ObjectId) {
+    const user = await this.usersRepository.findUserById(id);
+    if (!user) {
+      throw new Error('something went wrong while confirmation user');
+    }
+    return this.usersRepository.registrateConfirmCode(user, user.email);
   }
 }

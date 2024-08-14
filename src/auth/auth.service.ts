@@ -65,19 +65,15 @@ export class AuthService {
 
   async registrateUsingEmail(code: string) {
     try {
-      const isCorrectCode = await this.usersService.findUserById(code);
+      const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
       const isConfirmCode = await this.usersService.checkIsConfirm(code);
       if (!isCorrectCode || !isConfirmCode) {
-        throw new HttpException(
-          'confirm code is not correct',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new UnauthorizedException('confirm code is not correct');
       }
-      return this.usersService.updateConfirmationIsConfirmed(code);
+      return await this.usersService.updateConfirmationIsConfirmed(code);
     } catch (e) {
-      throw new HttpException(
+      throw new UnauthorizedException(
         'something went wrong while confirmation the user',
-        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -89,6 +85,11 @@ export class AuthService {
         'something went wrong while registering the user',
         HttpStatus.BAD_REQUEST,
       );
+    }
+    try {
+      await this.usersService.registrateConfirmCode(user.id);
+    } catch (e) {
+      console.log(e);
     }
     return await this.mailService.sendConfirmCode(
       user.email,
