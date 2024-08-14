@@ -59,8 +59,8 @@ export class AuthController {
     return { email: user?.email, login: user?.login, userId: user?.id };
   }
 
-  @Post('password-recovery')
-  async passwordRecovery(@Body() email: string) {
-    return this.authService.passwordRecovery(email);
+  @Post('registration-email-resending')
+  async emailResending(@Body() email: string) {
+    return this.authService.emailResending(email);
   }
 }

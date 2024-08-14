@@ -55,55 +55,41 @@ export class AuthService {
     };
   }
 
-  async passwordRecovery(email: string) {
+  async emailResending(email: string) {
     const user = await this.usersService.findOne(email);
     if (!user) {
       throw new HttpException('user does not exist', HttpStatus.BAD_REQUEST);
     }
-    return this.mailService.sendPasswordRecovery(email, user.id);
+    return this.mailService.emailResending(email);
   }
 
   async registrateUsingEmail(code: string) {
-    try {
-      const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
-      const isConfirmCode = await this.usersService.checkIsConfirm(code);
-      if (!isCorrectCode || !isConfirmCode) {
-        throw new UnauthorizedException('confirm code is not correct');
-      }
-      return await this.usersService.updateConfirmationIsConfirmed(code);
-    } catch (e) {
-      throw new UnauthorizedException(
-        'something went wrong while confirmation the user',
+    const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
+    const isConfirmCode = await this.usersService.checkIsConfirm(code);
+    if (!isCorrectCode || isConfirmCode) {
+      throw new HttpException(
+        'confirm code is not correct',
+        HttpStatus.UNAUTHORIZED,
       );
     }
+    return this.usersService.updateConfirmationIsConfirmed(code);
   }
 
   async registrate(loginUserDTO: CreateUserDto) {
-    const user = await this.usersService.findOne(loginUserDTO.email);
-    if (!user) {
-      const newUser = await this.usersService.createUser(loginUserDTO);
-      const regUser = await this.usersService.findOne(newUser.email);
-      if (!regUser) {
-        throw new Error('something went wrong while registration');
-      }
-      try {
-        await this.usersService.registrateConfirmCode(regUser.id);
-      } catch (e) {
-        console.log(e);
-      }
-      return await this.mailService.sendConfirmCode(
-        regUser.email,
-        regUser.emailConfirmation.confirmationCode,
-      );
+    const existUser =
+      await this.usersService.chechForExistingUser(loginUserDTO);
+    if (existUser) {
+      throw new HttpException('user already exist', HttpStatus.BAD_REQUEST);
+    }
+    const newUser = await this.usersService.createUser(loginUserDTO);
+    const regUser = await this.usersService.findOne(newUser.email);
+    if (!regUser) {
+      throw new Error('something went wrong while registration');
     }
     try {
-      await this.usersService.registrateConfirmCode(user.id);
+      await this.usersService.registrateConfirmCode(regUser.id);
     } catch (e) {
       console.log(e);
     }
-    return await this.mailService.sendConfirmCode(
-      user.email,
-      user.emailConfirmation.confirmationCode,
-    );
   }
 }

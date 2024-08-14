@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './user.repository';
 import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
@@ -72,12 +72,6 @@ export class UsersService {
     if (!user) {
       throw new Error('something went wrong while confirmation user');
     }
-    if (user.emailConfirmation.isConfirmed) {
-      throw new HttpException(
-        'user already is confirmed',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
     return this.usersRepository.registrateConfirmCode(user, user.email);
   }
 
@@ -94,5 +88,11 @@ export class UsersService {
       return false;
     }
     return user;
+  }
+
+  async chechForExistingUser(loginUserDTO: CreateUserDto) {
+    const user1 = await this.usersRepository.findOne(loginUserDTO.login);
+    const user2 = await this.usersRepository.findOne(loginUserDTO.email);
+    return !(user2 || user1);
   }
 }

@@ -18,15 +18,15 @@ export class MailAdapter {
     });
   }
 
-  async sendPasswordRecovery(email: string, recoveryCode: string) {
+  async emailResending(email: string) {
     await this.mailService.sendMail({
       to: email,
       from: 'test_app',
       subject: 'password recovery',
       html:
         `<h1>Password recovery</h1>` +
-        `<p>${recoveryCode} To finish password recovery please follow the link below:\n` +
-        `<a href='https://somesite.com/password-recovery?recoveryCode=${recoveryCode}'>recovery password</a>\n` +
+        `<p>${email} To finish password recovery please follow the link below:\n` +
+        `<a href='https://somesite.com/password-recovery?recoveryCode=${email}'>recovery password</a>\n` +
         `</p>`,
     });
   }

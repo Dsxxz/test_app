@@ -54,7 +54,7 @@ export class UsersRepository {
 
   async updateConfirmationIsConfirmed(code: string): Promise<boolean> {
     const userInstance = await this.userModel.findByIdAndUpdate(
-      { id: code },
+      { 'emailConfirmation.confirmationCode': code },
       { $set: { 'emailConfirmation.isConfirmed': true } },
     );
     if (!userInstance) return false;
@@ -142,7 +142,6 @@ export class UsersRepository {
     user.emailConfirmation.expirationDate = add(new Date(), {
       minutes: 5,
     });
-    user.emailConfirmation.isConfirmed = true;
     await this.saveUser(user);
     return user;
   }
@@ -156,5 +155,11 @@ export class UsersRepository {
       return false;
     }
     return user;
+  }
+
+  async checkIsConfirm(user: UserDocument) {
+    const res = await this.userModel.findOne(user._id);
+    console.log(res);
+    return res ? res.emailConfirmation.isConfirmed : false;
   }
 }
