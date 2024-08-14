@@ -9,6 +9,7 @@ import { EnumDirection } from '../helpers/pagination/enum.direction';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
 import bcrypt from 'bcrypt';
 import { add } from 'date-fns';
+import { isLogLevelEnabled } from '@nestjs/common/services/utils';
 @Injectable()
 export class UsersRepository {
   constructor(
@@ -17,7 +18,7 @@ export class UsersRepository {
 
   async createUser(createUserDto: CreateUserDto): Promise<UserViewModel> {
     const passwordSalt: string = await bcrypt.genSalt(10);
-    const passwordHash = await this.generateHash(
+    const passwordHash: string = await this.generateHash(
       createUserDto.password,
       passwordSalt,
     );
@@ -26,7 +27,8 @@ export class UsersRepository {
     const createUser = new this.userModel({
       login: createUserDto.login,
       email: createUserDto.email,
-      password: passwordHash,
+      userPasswordHash: passwordHash,
+      userPasswordSalt: passwordSalt,
       createdAt: createdAt,
       emailConfirmation: {
         confirmationCode: null,
@@ -39,6 +41,7 @@ export class UsersRepository {
     createUser.id = createUser._id.toString();
 
     await this.saveUser(createUser);
+    console.log(createUser);
     return {
       id: createUser.id,
       login: createUser.login,
@@ -115,7 +118,7 @@ export class UsersRepository {
     return user.length;
   }
 
-  async findOne(loginOrEmail: string) {
+  async findOne(loginOrEmail: string): Promise<UserDocument | null> {
     return this.userModel.findOne({
       $or: [
         {
