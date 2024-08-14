@@ -71,13 +71,13 @@ export class AuthService {
     if (!isCorrectCode) {
       throw new BadRequestException({
         message: 'code is a wrong',
-        field: 'string',
+        field: 'code',
       });
     }
     if (isConfirmCode) {
       throw new BadRequestException({
         message: 'code is already confirmed',
-        field: 'string',
+        field: 'code',
       });
     }
 
