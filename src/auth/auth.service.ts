@@ -69,7 +69,7 @@ export class AuthService {
     if (!isCorrectCode || isConfirmCode) {
       throw new HttpException(
         'confirm code is not correct',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.BAD_REQUEST,
       );
     }
     return this.usersService.updateConfirmationIsConfirmed(code);
@@ -77,9 +77,9 @@ export class AuthService {
 
   async registrate(loginUserDTO: CreateUserDto) {
     const existUser =
-      await this.usersService.chechForExistingUser(loginUserDTO);
+      await this.usersService.checkForExistingUser(loginUserDTO);
     if (existUser) {
-      throw new HttpException('user already exist', HttpStatus.BAD_REQUEST);
+      throw new HttpException('user already exists', HttpStatus.BAD_REQUEST);
     }
     const newUser = await this.usersService.createUser(loginUserDTO);
     const regUser = await this.usersService.findOne(newUser.email);

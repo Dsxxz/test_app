@@ -90,9 +90,9 @@ export class UsersService {
     return user;
   }
 
-  async chechForExistingUser(loginUserDTO: CreateUserDto) {
+  async checkForExistingUser(loginUserDTO: CreateUserDto) {
     const user1 = await this.usersRepository.findOne(loginUserDTO.login);
     const user2 = await this.usersRepository.findOne(loginUserDTO.email);
-    return !(user2 || user1);
+    return !!(user2 || user1);
   }
 }
