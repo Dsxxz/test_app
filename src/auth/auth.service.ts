@@ -75,7 +75,10 @@ export class AuthService {
       }
       return this.usersService.updateConfirmationIsConfirmed(code);
     } catch (e) {
-      throw new HttpException('gfhjfg', HttpStatus.BAD_REQUEST);
+      throw new HttpException(
+        'something went wrong while confirmation the user',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
@@ -87,7 +90,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    return this.mailService.sendConfirmCode(
+    return await this.mailService.sendConfirmCode(
       user.email,
       user.emailConfirmation.confirmationCode,
     );

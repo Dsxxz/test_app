@@ -29,8 +29,8 @@ export class AuthController {
     @Res() res: Response,
   ) {
     const user = await this.userService.findOne(registrateDTO.loginOrEmail);
+    console.log(user);
     if (!user) {
-      console.log(user);
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
@@ -43,8 +43,7 @@ export class AuthController {
   @Post('registration')
   @HttpCode(204)
   async registrate(@Body() loginUserDTO: CreateUserDto) {
-    await this.userService.createUser(loginUserDTO);
-    return await this.authService.registrate(loginUserDTO);
+    return this.authService.registrate(loginUserDTO);
   }
 
   @Post('registration-confirmation')
