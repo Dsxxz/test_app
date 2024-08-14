@@ -14,7 +14,10 @@ import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
-import { CreateUserDto } from '../users/models/users.create.dto';
+import {
+  CreateUserDto,
+  VerifyEmailDto,
+} from '../users/models/users.create.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -41,14 +44,17 @@ export class AuthController {
   }
   @Post('registration')
   @HttpCode(204)
-  async registrate(@Body() loginUserDTO: CreateUserDto) {
-    return this.authService.registrate(loginUserDTO);
+  async registrate(@Body() loginUserDTO: CreateUserDto, @Res() res: Response) {
+    const result = await this.authService.registrate(loginUserDTO);
+    if (!result) {
+      return res.sendStatus(HttpStatus.BAD_REQUEST);
+    }
+    return res.status(HttpStatus.OK).send(result);
   }
 
   @Post('registration-confirmation')
-  @HttpCode(204)
-  async verifyEmail(@Body() code: string) {
-    return this.authService.registrateUsingEmail(code);
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
+    return this.authService.registrateUsingEmail(verifyEmailDto.code);
   }
 
   @UseGuards(JwtAuthGuard)

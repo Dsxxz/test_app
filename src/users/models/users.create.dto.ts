@@ -29,3 +29,9 @@ export class CreateUserDto {
   @Matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
   email: string;
 }
+import { IsString } from 'class-validator';
+
+export class VerifyEmailDto {
+  @IsString()
+  code: string;
+}

@@ -59,7 +59,7 @@ export class UsersService {
   }
 
   async checkIsConfirm(code: string): Promise<boolean> {
-    const user = await this.usersRepository.findUserById(new ObjectId(code));
+    const user = await this.usersRepository.findOne(code);
     return user ? user.emailConfirmation.isConfirmed : false;
   }
 

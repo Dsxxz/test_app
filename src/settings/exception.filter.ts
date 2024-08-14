@@ -23,22 +23,25 @@ export class HttpExceptionFilter implements ExceptionFilter {
       const responseBody: any = exception.getResponse();
 
       if (
-        typeof responseBody.message !== 'string' &&
-        responseBody.message !== undefined
+        status === HttpStatus.BAD_REQUEST ||
+        status === HttpStatus.NOT_FOUND
       ) {
-        responseBody.message.forEach((m: any) =>
-          errorsResponse.errorsMessages.push(m),
-        );
-        response.status(status).json(errorsResponse);
+        if (typeof responseBody.message === 'string') {
+          errorsResponse.errorsMessages.push(responseBody.message);
+        } else if (Array.isArray(responseBody.message)) {
+          responseBody.message.forEach((m: any) =>
+            errorsResponse.errorsMessages.push(m),
+          );
+        }
+
+        return response.status(status).json(errorsResponse);
       } else {
-        response.status(status).json(responseBody.message);
+        response.status(status).json({
+          statusCode: status,
+          timestamp: new Date().toISOString(),
+          path: request.url,
+        });
       }
-    } else {
-      response.status(status).json({
-        statusCode: status,
-        timestamp: new Date().toISOString(),
-        path: request.url,
-      });
     }
   }
 }

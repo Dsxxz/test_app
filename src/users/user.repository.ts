@@ -53,7 +53,7 @@ export class UsersRepository {
   }
 
   async updateConfirmationIsConfirmed(code: string): Promise<boolean> {
-    const userInstance = await this.userModel.findByIdAndUpdate(
+    const userInstance = await this.userModel.findOneAndUpdate(
       { 'emailConfirmation.confirmationCode': code },
       { $set: { 'emailConfirmation.isConfirmed': true } },
     );
@@ -130,10 +130,11 @@ export class UsersRepository {
   }
 
   async checkIsCorrectCode(code: string) {
-    const user = await this.userModel.findOne({
-      'emailConfirmation.confirmationCode': code,
-    });
-    console.log(user);
+    const user = await this.userModel
+      .findOne({
+        'emailConfirmation.confirmationCode': code,
+      })
+      .exec();
     return !!user;
   }
 
@@ -159,7 +160,6 @@ export class UsersRepository {
 
   async checkIsConfirm(user: UserDocument) {
     const res = await this.userModel.findOne(user._id);
-    console.log(res);
     return res ? res.emailConfirmation.isConfirmed : false;
   }
 }

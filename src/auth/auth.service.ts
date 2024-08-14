@@ -1,6 +1,5 @@
 import {
-  HttpException,
-  HttpStatus,
+  BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -58,20 +57,31 @@ export class AuthService {
   async emailResending(email: string) {
     const user = await this.usersService.findOne(email);
     if (!user) {
-      throw new HttpException('user does not exist', HttpStatus.BAD_REQUEST);
+      throw new Error('user does not exist');
     }
     return this.mailService.emailResending(email);
   }
 
   async registrateUsingEmail(code: string) {
+    // Проверка правильности кода
     const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
+    // Проверка подтвержденного кода
     const isConfirmCode = await this.usersService.checkIsConfirm(code);
-    if (!isCorrectCode || isConfirmCode) {
-      throw new HttpException(
-        'confirm code is not correct',
-        HttpStatus.BAD_REQUEST,
-      );
+    // Логика обработки результата
+    if (!isCorrectCode) {
+      throw new BadRequestException({
+        message: 'code is a wrong',
+        field: 'string',
+      });
     }
+    if (isConfirmCode) {
+      throw new BadRequestException({
+        message: 'code is already confirmed',
+        field: 'string',
+      });
+    }
+
+    // Обновление подтверждения
     return this.usersService.updateConfirmationIsConfirmed(code);
   }
 
@@ -79,7 +89,7 @@ export class AuthService {
     const existUser =
       await this.usersService.checkForExistingUser(loginUserDTO);
     if (existUser) {
-      throw new HttpException('user already exists', HttpStatus.BAD_REQUEST);
+      throw new Error('user already exist');
     }
     const newUser = await this.usersService.createUser(loginUserDTO);
     const regUser = await this.usersService.findOne(newUser.email);
@@ -89,6 +99,7 @@ export class AuthService {
     try {
       await this.usersService.registrateConfirmCode(regUser.id);
       await this.mailService.sendConfirmCode(newUser.email, regUser.email);
+      return true;
     } catch (e) {
       console.log(e);
     }
