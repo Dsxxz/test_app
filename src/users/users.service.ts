@@ -4,6 +4,7 @@ import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
 import { ObjectId } from 'mongodb';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
+import { CreateAuthDto } from '../auth/dto/create-auth.dto';
 
 @Injectable()
 export class UsersService {
@@ -77,5 +78,20 @@ export class UsersService {
       throw new Error('something went wrong while confirmation user');
     }
     return this.usersRepository.registrateConfirmCode(user, user.email);
+  }
+
+  async loginUser(registrateDTO: CreateAuthDto) {
+    const user = await this.usersRepository.findOne(registrateDTO.loginOrEmail);
+    if (!user) {
+      return false;
+    }
+    const password = await this.usersRepository.checkUserPassword(
+      registrateDTO.password,
+      user,
+    );
+    if (!password) {
+      return false;
+    }
+    return user;
   }
 }

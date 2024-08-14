@@ -46,6 +46,7 @@ export class UsersRepository {
       createdAt: createUser.createdAt,
     };
   }
+
   async generateHash(password: string, salt: string) {
     return bcrypt.hash(password, salt);
   }
@@ -141,6 +142,17 @@ export class UsersRepository {
       minutes: 5,
     });
     await this.saveUser(user);
+    return user;
+  }
+
+  async checkUserPassword(password: string, user: UserDocument) {
+    const passwordHash: string = await this.generateHash(
+      password,
+      user.userPasswordSalt,
+    );
+    if (passwordHash !== user.userPasswordHash) {
+      return false;
+    }
     return user;
   }
 }

@@ -49,7 +49,7 @@ export class AuthService {
       sub: userPayload.id,
     };
     return {
-      access_token: this.jwtService.sign(payload, {
+      accessToken: this.jwtService.sign(payload, {
         secret: jwtConstants.secret,
       }),
     };

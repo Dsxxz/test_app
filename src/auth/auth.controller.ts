@@ -28,12 +28,12 @@ export class AuthController {
     @Body() registrateDTO: CreateAuthDto,
     @Res() res: Response,
   ) {
-    const user = await this.userService.findOne(registrateDTO.loginOrEmail);
+    const user = await this.userService.loginUser(registrateDTO);
     if (!user) {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
-    res.cookie('accessToken', token.access_token, {
+    res.cookie('accessToken ', token.accessToken, {
       httpOnly: true,
       secure: true,
     });
