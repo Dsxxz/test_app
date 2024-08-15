@@ -6,8 +6,8 @@ import {
 import cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
 import { AppModule } from '../app.module';
-import { exceptionObjectType } from './types/exception.types';
-import { HttpExceptionFilter } from './exception.filter';
+import { exceptionObjectType } from './exception/types/exception.types';
+import { HttpExceptionFilter } from './exception/exception.filter';
 
 export const appOptions = (app: INestApplication) => {
   app.use(cookieParser());

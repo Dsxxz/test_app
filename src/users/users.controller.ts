@@ -62,8 +62,7 @@ export class UsersController {
     if (!user) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
-    await this.userService.deleteUserById(userId);
-    return;
+    return this.userService.deleteUserById(userId);
   }
 
   @Get(':id')

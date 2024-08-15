@@ -89,7 +89,7 @@ export class AuthService {
     const existUser =
       await this.usersService.checkForExistingUser(loginUserDTO);
     if (existUser) {
-      throw new Error('user already exist');
+      throw new BadRequestException('user already exist');
     }
     const newUser = await this.usersService.createUser(loginUserDTO);
     const regUser = await this.usersService.findOne(newUser.email);
