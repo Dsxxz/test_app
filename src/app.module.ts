@@ -10,6 +10,8 @@ import { PostsModule } from './posts/posts.module';
 import { AuthModule } from './auth/auth.module';
 import { mongoData } from './settings/mongoData/mongo.data';
 import { MailModule } from './infrastructure/mail/mail.module';
+import { HttpExceptionFilter } from './settings/exception/exception.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 const mongoUri = mongoData.mongoRemote || mongoData.mongoLocal;
 
@@ -23,6 +25,13 @@ const mongoUri = mongoData.mongoRemote || mongoData.mongoLocal;
     MailModule,
   ],
   controllers: [AppController],
-  providers: [AppService, DataBaseService],
+  providers: [
+    AppService,
+    DataBaseService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {}
