@@ -1,5 +1,7 @@
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -89,7 +91,22 @@ export class AuthService {
     const existUser =
       await this.usersService.checkForExistingUser(loginUserDTO);
     if (existUser) {
-      throw new Error('user already exist');
+      const isRegisteredUser = await this.usersService.checkIsAlreadyRegistered(
+        existUser._id,
+      );
+      if (isRegisteredUser) {
+        throw new BadRequestException('user is already registered');
+      }
+      try {
+        await this.usersService.registrateConfirmCode(existUser.id);
+        await this.mailService.sendConfirmCode(
+          existUser.email,
+          existUser.email,
+        );
+        return true;
+      } catch (e) {
+        console.log(e);
+      }
     }
     const newUser = await this.usersService.createUser(loginUserDTO);
     const regUser = await this.usersService.findOne(newUser.email);

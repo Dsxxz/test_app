@@ -54,6 +54,7 @@ export class UsersController {
   async createUsers(@Body() createUserDto: CreateUserDto) {
     return this.userService.createUser(createUserDto);
   }
+
   @Delete(':id')
   @HttpCode(204)
   @UseGuards(BasicAuthGuard)

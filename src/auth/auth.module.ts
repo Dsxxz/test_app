@@ -9,11 +9,13 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { jwtConstants } from './constants/jwtConstants';
 import { MailAdapter } from '../infrastructure/mail.adapter';
 import { BasicStrategy } from './strategies/basic.strategy';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
     PassportModule,
+    ConfigModule,
     JwtModule.register({
       secret: '' + jwtConstants.secret,
       signOptions: { expiresIn: '5min' },

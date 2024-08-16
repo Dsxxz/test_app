@@ -1,19 +1,17 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { BasicStrategy as Strategy } from 'passport-http';
-import { UnauthorizedException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { basicConstants } from '../constants/basicConstants';
 
+@Injectable()
 export class BasicStrategy extends PassportStrategy(Strategy, 'basic') {
-  constructor() {
-    super();
-  }
-  public async validate(username: string, password: string) {
+  public async validate(Username: string, Password: string) {
     if (
-      basicConstants.Username === username &&
-      basicConstants.Password === password
+      basicConstants.username === Username &&
+      basicConstants.password === Password
     ) {
       return true;
     }
-    throw new UnauthorizedException();
+    throw new UnauthorizedException({ message: 'Incorrect credentials' });
   }
 }

@@ -101,8 +101,15 @@ export class UsersService {
   }
 
   async checkForExistingUser(loginUserDTO: CreateUserDto) {
-    const user1 = await this.usersRepository.findOne(loginUserDTO.login);
-    const user2 = await this.usersRepository.findOne(loginUserDTO.email);
-    return !!(user2 || user1);
+    const user1 = await this.usersRepository.findOne(loginUserDTO.email);
+    const user2 = await this.usersRepository.findOne(loginUserDTO.login);
+    return user1 ? user1 : user2;
+  }
+  async checkIsAlreadyRegistered(id: ObjectId) {
+    const user = await this.usersRepository.findUserById(id);
+    if (!user) {
+      return false;
+    }
+    return user.emailConfirmation.isConfirmed;
   }
 }

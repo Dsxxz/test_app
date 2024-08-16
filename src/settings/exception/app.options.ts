@@ -5,9 +5,10 @@ import {
 } from '@nestjs/common';
 import cookieParser from 'cookie-parser';
 import { useContainer } from 'class-validator';
-import { AppModule } from '../app.module';
-import { exceptionObjectType } from './types/exception.types';
+import { AppModule } from '../../app.module';
+import { exceptionObjectType } from '../types/exception.types';
 import { HttpExceptionFilter } from './exception.filter';
+import { ExceptionUnautorizedFilter } from './exception.unautorized.filter';
 
 export const appOptions = (app: INestApplication) => {
   app.use(cookieParser());
@@ -40,4 +41,5 @@ export const appOptions = (app: INestApplication) => {
   );
   app.enableCors();
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalFilters(new ExceptionUnautorizedFilter());
 };

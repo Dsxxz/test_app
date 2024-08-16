@@ -6,7 +6,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { exceptionResponseType } from './types/exception.response.type';
+import { exceptionResponseType } from '../types/exception.response.type';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -33,7 +33,6 @@ export class HttpExceptionFilter implements ExceptionFilter {
             errorsResponse.errorsMessages.push(m),
           );
         }
-
         return response.status(status).json(errorsResponse);
       } else {
         response.status(status).json({

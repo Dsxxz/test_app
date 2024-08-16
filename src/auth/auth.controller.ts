@@ -45,11 +45,15 @@ export class AuthController {
   @Post('registration')
   @HttpCode(204)
   async registrate(@Body() loginUserDTO: CreateUserDto, @Res() res: Response) {
-    const result = await this.authService.registrate(loginUserDTO);
-    if (!result) {
-      return res.sendStatus(HttpStatus.BAD_REQUEST);
+    try {
+      const result = await this.authService.registrate(loginUserDTO);
+      if (!result) {
+        return res.sendStatus(HttpStatus.BAD_REQUEST);
+      }
+      return res.status(HttpStatus.OK).send(result);
+    } catch (e) {
+      console.log(e);
     }
-    return res.status(HttpStatus.OK).send(result);
   }
 
   @Post('registration-confirmation')
