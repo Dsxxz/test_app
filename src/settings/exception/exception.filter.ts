@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { exceptionResponseType } from '../types/exception.response.type';
+import { exceptionObjectType } from '../types/exception.types';
 
 @Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -26,7 +27,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
         typeof responseBody.message !== 'string' &&
         responseBody.message !== undefined
       ) {
-        responseBody.message.forEach((m: any) =>
+        responseBody.message.forEach((m: exceptionObjectType) =>
           errorsResponse.errorsMessages.push(m),
         );
         response.status(status).json(errorsResponse);
