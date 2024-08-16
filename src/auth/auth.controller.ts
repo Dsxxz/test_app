@@ -50,7 +50,7 @@ export class AuthController {
       if (!result) {
         return res.sendStatus(HttpStatus.BAD_REQUEST);
       }
-      return res.status(HttpStatus.OK).send(result);
+      return res.status(HttpStatus.NO_CONTENT).send(result);
     } catch (e) {
       console.log(e);
     }
