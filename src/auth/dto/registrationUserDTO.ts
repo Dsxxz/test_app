@@ -3,6 +3,7 @@ import { Prop } from '@nestjs/mongoose';
 import {
   IsEmail,
   IsNotEmpty,
+  IsString,
   Matches,
   MaxLength,
   MinLength,
@@ -14,6 +15,7 @@ import { IsLoginUnique } from '../../validation/unique.login.decorator';
 export class RegistrationUserDTO {
   @Prop()
   @IsNotEmpty()
+  @IsString()
   @MinLength(3)
   @MaxLength(10)
   @Matches('^[a-zA-Z0-9_-]*$')

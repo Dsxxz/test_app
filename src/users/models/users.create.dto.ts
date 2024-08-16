@@ -7,6 +7,9 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { IsString } from 'class-validator';
+import { IsEmailUnique } from '../../validation/unique.email.decorator';
+import { IsLoginUnique } from '../../validation/unique.login.decorator';
 
 @Injectable()
 export class CreateUserDto {
@@ -15,6 +18,7 @@ export class CreateUserDto {
   @MinLength(3)
   @MaxLength(10)
   @Matches('^[a-zA-Z0-9_-]*$')
+  @IsLoginUnique({ message: 'User with this username already exists' })
   login: string;
 
   @Prop()
@@ -27,9 +31,9 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   @Matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
+  @IsEmailUnique({ message: 'User with this email already exists' })
   email: string;
 }
-import { IsString } from 'class-validator';
 
 export class VerifyEmailDto {
   @IsString()

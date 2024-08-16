@@ -91,7 +91,10 @@ export class AuthService {
       throw new Error('something went wrong when creating user');
     }
     try {
-      return this.mailService.sendConfirmCode(newUser.email, newUser.email);
+      return await this.mailService.sendConfirmCode(
+        newUser.email,
+        newUser.email,
+      );
     } catch (e) {
       console.log(e);
     }
