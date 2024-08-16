@@ -10,6 +10,8 @@ import { jwtConstants } from './constants/jwtConstants';
 import { MailAdapter } from '../infrastructure/mail.adapter';
 import { BasicStrategy } from './strategies/basic.strategy';
 import { ConfigModule } from '@nestjs/config';
+import { IsUserAlreadyExistConstraint } from '../validation/unique.login.decorator';
+import { IsEmailExistConstraint } from '../validation/unique.email.decorator';
 
 @Module({
   imports: [
@@ -28,6 +30,8 @@ import { ConfigModule } from '@nestjs/config';
     LocalStrategy,
     MailAdapter,
     BasicStrategy,
+    IsUserAlreadyExistConstraint,
+    IsEmailExistConstraint,
   ],
 })
 export class AuthModule {}

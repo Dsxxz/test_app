@@ -14,10 +14,8 @@ import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
-import {
-  CreateUserDto,
-  VerifyEmailDto,
-} from '../users/models/users.create.dto';
+import { VerifyEmailDto } from '../users/models/users.create.dto';
+import { RegistrationUserDTO } from './dto/registrationUserDTO';
 
 @Controller('auth')
 export class AuthController {
@@ -44,16 +42,8 @@ export class AuthController {
   }
   @Post('registration')
   @HttpCode(204)
-  async registrate(@Body() loginUserDTO: CreateUserDto, @Res() res: Response) {
-    try {
-      const result = await this.authService.registrate(loginUserDTO);
-      if (!result) {
-        return res.sendStatus(HttpStatus.BAD_REQUEST);
-      }
-      return res.status(HttpStatus.NO_CONTENT).send(result);
-    } catch (e) {
-      console.log(e);
-    }
+  async registrate(@Body() loginUserDTO: RegistrationUserDTO) {
+    return this.authService.registrate(loginUserDTO);
   }
 
   @Post('registration-confirmation')

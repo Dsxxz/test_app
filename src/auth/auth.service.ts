@@ -1,7 +1,5 @@
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -10,7 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
-import { CreateUserDto } from '../users/models/users.create.dto';
+import { RegistrationUserDTO } from './dto/registrationUserDTO';
 
 @Injectable()
 export class AuthService {
@@ -87,36 +85,13 @@ export class AuthService {
     return this.usersService.updateConfirmationIsConfirmed(code);
   }
 
-  async registrate(loginUserDTO: CreateUserDto) {
-    const existUser =
-      await this.usersService.checkForExistingUser(loginUserDTO);
-    if (existUser) {
-      const isRegisteredUser = await this.usersService.checkIsAlreadyRegistered(
-        existUser._id,
-      );
-      if (isRegisteredUser) {
-        throw new BadRequestException('user is already registered');
-      }
-      try {
-        await this.usersService.registrateConfirmCode(existUser.id);
-        await this.mailService.sendConfirmCode(
-          existUser.email,
-          existUser.email,
-        );
-        return true;
-      } catch (e) {
-        console.log(e);
-      }
-    }
+  async registrate(loginUserDTO: RegistrationUserDTO) {
     const newUser = await this.usersService.createUser(loginUserDTO);
-    const regUser = await this.usersService.findOne(newUser.email);
-    if (!regUser) {
-      throw new Error('something went wrong while registration');
+    if (!newUser) {
+      throw new Error('something went wrong when creating user');
     }
     try {
-      await this.usersService.registrateConfirmCode(regUser.id);
-      await this.mailService.sendConfirmCode(newUser.email, regUser.email);
-      return true;
+      return this.mailService.sendConfirmCode(newUser.email, newUser.email);
     } catch (e) {
       console.log(e);
     }

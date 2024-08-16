@@ -5,14 +5,14 @@ import {
   ValidatorConstraintInterface,
 } from 'class-validator';
 import { Injectable } from '@nestjs/common';
-import { UsersRepository } from '../users/user.repository';
+import { UsersService } from '../users/users.service';
 
-@ValidatorConstraint({ name: 'IsEmailExist', async: true })
+@ValidatorConstraint({ name: 'IsEmailUnique', async: true })
 @Injectable()
 export class IsEmailExistConstraint implements ValidatorConstraintInterface {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(protected userService: UsersService) {}
   async validate(email: string) {
-    const user = await this.usersRepository.findOne(email);
+    const user = await this.userService.findOne(email);
     return !user;
   }
 }
