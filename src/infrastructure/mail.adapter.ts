@@ -16,6 +16,7 @@ export class MailAdapter {
         `<a href="https://somesite.com/confirm-email?code=${confirmationCode}">complete registration</a>\n` +
         '</p>',
     });
+    return;
   }
 
   async emailResending(email: string) {
@@ -29,5 +30,6 @@ export class MailAdapter {
         `<a href='https://somesite.com/password-recovery?recoveryCode=${email}'>recovery password</a>\n` +
         `</p>`,
     });
+    return;
   }
 }
