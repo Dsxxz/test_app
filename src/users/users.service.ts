@@ -5,6 +5,7 @@ import { UserViewModel } from './models/user.view.model';
 import { ObjectId } from 'mongodb';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
 import { CreateAuthDto } from '../auth/dto/create-auth.dto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class UsersService {
@@ -75,6 +76,9 @@ export class UsersService {
 
   async updateConfirmationIsConfirmed(code: string) {
     return this.usersRepository.updateConfirmationIsConfirmed(code);
+  }
+  generateRandomString(length: number): string {
+    return randomBytes(length).toString('hex').slice(0, length);
   }
 
   async registrateConfirmCode(id: ObjectId) {

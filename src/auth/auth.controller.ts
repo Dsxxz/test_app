@@ -16,6 +16,7 @@ import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
 import { VerifyEmailDto } from '../users/models/users.create.dto';
 import { RegistrationUserDTO } from './dto/registrationUserDTO';
+import { Email_Auth_DTO } from './dto/email_auth_DTO';
 
 @Controller('auth')
 export class AuthController {
@@ -60,7 +61,7 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
-  async emailResending(@Body() email: string) {
-    return this.authService.emailResending(email);
+  async emailResending(@Body() email_Auth_DTO: Email_Auth_DTO) {
+    return this.authService.emailResending(email_Auth_DTO.email);
   }
 }

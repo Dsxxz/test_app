@@ -9,6 +9,7 @@ import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
 import { RegistrationUserDTO } from './dto/registrationUserDTO';
+import { exceptionObjectType } from '../settings/types/exception.types';
 
 @Injectable()
 export class AuthService {
@@ -72,13 +73,13 @@ export class AuthService {
       throw new BadRequestException({
         message: 'code is a wrong',
         field: 'code',
-      });
+      } as exceptionObjectType);
     }
     if (isConfirmCode) {
       throw new BadRequestException({
         message: 'code is already confirmed',
         field: 'code',
-      });
+      } as exceptionObjectType);
     }
 
     // Обновление подтверждения
