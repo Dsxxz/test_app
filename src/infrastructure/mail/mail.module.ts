@@ -3,6 +3,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { mailData } from '../constants/mail.data';
 import { MailAdapter } from '../mail.adapter';
 import * as dotenv from 'dotenv';
+import * as process from 'process';
 dotenv.config();
 
 @Module({
@@ -10,7 +11,7 @@ dotenv.config();
     MailerModule.forRoot({
       transport: {
         host: 'smtp.gmail.com',
-        port: 465,
+        port: process.env.SMTP_PORT || 465,
         secure: true,
         auth: {
           user: mailData.email,
