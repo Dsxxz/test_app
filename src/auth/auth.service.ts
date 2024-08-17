@@ -9,7 +9,6 @@ import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
 import { RegistrationUserDTO } from './dto/registrationUserDTO';
-import { exceptionObjectType } from '../settings/types/exception.types';
 
 @Injectable()
 export class AuthService {
