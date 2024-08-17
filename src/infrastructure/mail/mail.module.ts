@@ -12,7 +12,7 @@ dotenv.config();
       transport: {
         host: 'smtp.gmail.com',
         port: process.env.SMTP_PORT || 465,
-        secure: true,
+        secure: false,
         auth: {
           user: mailData.email,
           pass: mailData.pass,
