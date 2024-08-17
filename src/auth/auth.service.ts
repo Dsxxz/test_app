@@ -58,7 +58,7 @@ export class AuthService {
   async emailResending(email: string) {
     const user = await this.usersService.findOne(email);
     if (!user) {
-      throw new Error('user does not exist');
+      throw new BadRequestException('user does not exist');
     }
     return this.mailService.emailResending(email);
   }
