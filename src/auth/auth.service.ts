@@ -71,15 +71,17 @@ export class AuthService {
     // Логика обработки результата
     if (!isCorrectCode) {
       throw new BadRequestException({
-        message: 'code is a wrong',
-        field: 'code',
-      } as exceptionObjectType);
+        errorsMessages: [
+          { message: 'code is already confirmed', field: 'code' },
+        ],
+      });
     }
     if (isConfirmCode) {
       throw new BadRequestException({
-        message: 'code is already confirmed',
-        field: 'code',
-      } as exceptionObjectType);
+        errorsMessages: [
+          { message: 'code is already confirmed', field: 'code' },
+        ],
+      });
     }
 
     // Обновление подтверждения

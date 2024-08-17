@@ -61,6 +61,7 @@ export class AuthController {
   }
 
   @Post('registration-email-resending')
+  @HttpCode(204)
   async emailResending(@Body() email_Auth_DTO: Email_Auth_DTO) {
     return this.authService.emailResending(email_Auth_DTO.email);
   }
