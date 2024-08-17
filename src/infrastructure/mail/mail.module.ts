@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { mailData } from '../constants/mail.data';
 import { MailAdapter } from '../mail.adapter';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 @Module({
   imports: [

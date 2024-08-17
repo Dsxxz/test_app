@@ -91,7 +91,13 @@ export class AuthService {
       throw new Error('something went wrong when creating user');
     }
     try {
-      return this.mailService.sendConfirmCode(newUser.email, newUser.email);
+      const mail = await this.mailService.sendConfirmCode(
+        newUser.email,
+        newUser.email,
+      );
+      if (!mail) {
+        return this.usersService.deleteUserById(newUser.id);
+      }
     } catch (e) {
       console.log(e);
     }
