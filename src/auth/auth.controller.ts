@@ -48,6 +48,7 @@ export class AuthController {
   }
 
   @Post('registration-confirmation')
+  @HttpCode(204)
   async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto) {
     return this.authService.registrateUsingEmail(verifyEmailDto.code);
   }

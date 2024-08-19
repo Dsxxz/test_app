@@ -59,7 +59,7 @@ export class UsersRepository {
     );
     if (!userInstance) return false;
     await this.saveUser(userInstance);
-    return true;
+    return userInstance.emailConfirmation.isConfirmed;
   }
 
   async getAllUsers(): Promise<UserViewModel[] | []> {

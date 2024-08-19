@@ -70,9 +70,6 @@ export class AuthService {
   async registrateUsingEmail(code: string) {
     // Проверка правильности кода
     const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
-    // Проверка подтвержденного кода
-    const isConfirmCode = await this.usersService.checkIsConfirm(code);
-    // Логика обработки результата
     if (!isCorrectCode) {
       throw new BadRequestException({
         errorsMessages: [
@@ -80,6 +77,10 @@ export class AuthService {
         ],
       } as exceptionResponseType);
     }
+    // Проверка подтвержденного кода
+    const isConfirmCode = await this.usersService.checkIsConfirm(code);
+    // Логика обработки результата
+
     if (isConfirmCode) {
       throw new BadRequestException({
         errorsMessages: [
