@@ -64,7 +64,7 @@ export class AuthService {
       throw new BadRequestException('user already confirmed');
     }
     const code = await this.usersService.generateRandomString(6);
-    await this.usersService.updateConfirmationIsConfirmed(code);
+    await this.usersService.registrateConfirmCode(user._id, code);
 
     return this.mailService.emailResending(user.email, code);
   }
