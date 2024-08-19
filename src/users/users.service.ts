@@ -77,16 +77,18 @@ export class UsersService {
   async updateConfirmationIsConfirmed(code: string) {
     return this.usersRepository.updateConfirmationIsConfirmed(code);
   }
-  async generateRandomString(length: number) {
+  generateRandomString(length: number) {
     return randomBytes(length).toString('hex').slice(0, length);
   }
 
-  async registrateConfirmCode(id: ObjectId, code: string) {
+  async registrateConfirmCode(id: ObjectId) {
+    const code = this.generateRandomString(6);
     const user = await this.usersRepository.findUserById(id);
     if (!user) {
       throw new Error('something went wrong while confirmation user');
     }
-    return this.usersRepository.registrateConfirmCode(user, code);
+    await this.usersRepository.registrateConfirmCode(user, code);
+    return code;
   }
 
   async loginUser(registrateDTO: CreateAuthDto) {
