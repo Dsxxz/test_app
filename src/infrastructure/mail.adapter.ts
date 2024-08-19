@@ -33,7 +33,7 @@ export class MailAdapter {
         html:
           `<h1>Password recovery</h1>` +
           `<p>${code} To finish password recovery please follow the link below:\n` +
-          `<a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>\n` +
+          `<a href='https://somesite.com/password-recovery?code=${code}'>recovery password</a>\n` +
           `</p>`,
       });
       console.log('Email sent successfully');
