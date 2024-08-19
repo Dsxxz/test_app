@@ -77,7 +77,7 @@ export class UsersService {
   async updateConfirmationIsConfirmed(code: string) {
     return this.usersRepository.updateConfirmationIsConfirmed(code);
   }
-  generateRandomString(length: number): string {
+  async generateRandomString(length: number) {
     return randomBytes(length).toString('hex').slice(0, length);
   }
 

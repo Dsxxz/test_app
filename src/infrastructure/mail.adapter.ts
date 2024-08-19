@@ -24,17 +24,40 @@ export class MailAdapter {
     }
   }
 
-  async emailResending(email: string) {
-    await this.mailService.sendMail({
-      to: email,
-      from: 'test_app',
-      subject: 'password recovery',
-      html:
-        `<h1>Password recovery</h1>` +
-        `<p>${email} To finish password recovery please follow the link below:\n` +
-        `<a href='https://somesite.com/password-recovery?recoveryCode=${email}'>recovery password</a>\n` +
-        `</p>`,
-    });
-    return true;
+  async emailResending(email: string, code: string) {
+    try {
+      await this.mailService.sendMail({
+        to: email,
+        from: 'test_app',
+        subject: 'new code',
+        html:
+          `<h1>Password recovery</h1>` +
+          `<p>${code} To finish password recovery please follow the link below:\n` +
+          `<a href='https://somesite.com/password-recovery?recoveryCode=${code}'>recovery password</a>\n` +
+          `</p>`,
+      });
+      console.log('Email sent successfully');
+      return true;
+    } catch (e) {
+      console.log('Failed to send email:', e);
+    }
+  }
+  async passwordRecovery(email: string) {
+    try {
+      await this.mailService.sendMail({
+        to: email,
+        from: 'test_app',
+        subject: 'password recovery',
+        html:
+          `<h1>Password recovery</h1>` +
+          `<p>${email} To finish password recovery please follow the link below:\n` +
+          `<a href='https://somesite.com/password-recovery?recoveryCode=${email}'>recovery password</a>\n` +
+          `</p>`,
+      });
+      console.log('Email sent successfully');
+      return true;
+    } catch (e) {
+      console.log('Failed to send email:', e);
+    }
   }
 }

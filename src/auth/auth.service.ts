@@ -60,7 +60,13 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('user does not exist');
     }
-    return this.mailService.emailResending(email);
+    if (user.emailConfirmation.isConfirmed) {
+      throw new BadRequestException('user already confirmed');
+    }
+    const code = await this.usersService.generateRandomString(6);
+    await this.usersService.updateConfirmationIsConfirmed(code);
+
+    return this.mailService.emailResending(user.email, code);
   }
 
   async registrateUsingEmail(code: string) {
