@@ -31,9 +31,9 @@ export class MailAdapter {
         from: 'test_app',
         subject: 'new code',
         html:
-          `<h1>Password recovery</h1>` +
+          `<h1>confirm-registration</h1>` +
           `<p>${code} To finish password recovery please follow the link below:\n` +
-          `<a href='https://somesite.com/password-recovery?code=${code}'>recovery password</a>\n` +
+          `<a href='https://some-front.com/confirm-registration?code=${code}'>recovery password</a>\n` +
           `</p>`,
       });
       console.log('Email sent successfully');
