@@ -159,6 +159,6 @@ export class UsersRepository {
     const user = await this.userModel.findOne({
       'emailConfirmation.confirmationCode': code,
     });
-    return user ? user.emailConfirmation.isConfirmed : false;
+    return user ? user : false;
   }
 }

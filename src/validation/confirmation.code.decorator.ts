@@ -20,7 +20,7 @@ export class IsCodeAlreadyConfirmed implements ValidatorConstraintInterface {
     if (!user) {
       return false;
     }
-    return !user;
+    return !user.emailConfirmation.isConfirmed;
   }
 }
 
