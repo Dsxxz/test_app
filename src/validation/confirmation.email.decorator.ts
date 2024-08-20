@@ -13,7 +13,7 @@ export class IsEmailAlreadyConfirmed implements ValidatorConstraintInterface {
   constructor(protected userService: UsersService) {}
   async validate(email: string) {
     const user = await this.userService.findOne(email);
-    return !!user?.emailConfirmation.isConfirmed;
+    return !user?.emailConfirmation.isConfirmed;
   }
 }
 
