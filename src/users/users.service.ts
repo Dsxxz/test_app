@@ -4,7 +4,7 @@ import { CreateUserDto } from './models/users.create.dto';
 import { UserViewModel } from './models/user.view.model';
 import { ObjectId } from 'mongodb';
 import { UserQueryDto } from '../helpers/pagination/user.query.dto';
-import { CreateAuthDto } from '../auth/dto/create-auth.dto';
+import { CreateAuthLoginDto } from '../auth/dto/create-auth-login-dto';
 import { randomBytes } from 'crypto';
 
 @Injectable()
@@ -91,7 +91,7 @@ export class UsersService {
     return code;
   }
 
-  async loginUser(registrateDTO: CreateAuthDto) {
+  async loginUser(registrateDTO: CreateAuthLoginDto) {
     const user = await this.usersRepository.findOne(registrateDTO.loginOrEmail);
     if (!user) {
       return false;
@@ -106,16 +106,7 @@ export class UsersService {
     return user;
   }
 
-  async checkForExistingUser(loginUserDTO: CreateUserDto) {
-    const user1 = await this.usersRepository.findOne(loginUserDTO.email);
-    const user2 = await this.usersRepository.findOne(loginUserDTO.login);
-    return user1 ? user1 : user2;
-  }
-  async checkIsAlreadyRegistered(id: ObjectId) {
-    const user = await this.usersRepository.findUserById(id);
-    if (!user) {
-      return false;
-    }
-    return user.emailConfirmation.isConfirmed;
+  async findUserByCode(code: string) {
+    return this.usersRepository.findUserByCode(code);
   }
 }

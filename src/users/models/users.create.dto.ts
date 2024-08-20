@@ -10,6 +10,7 @@ import {
 import { IsString } from 'class-validator';
 import { IsEmailUnique } from '../../validation/unique.email.decorator';
 import { IsLoginUnique } from '../../validation/unique.login.decorator';
+import { IsCodeConfirmed } from '../../validation/confirmation.code.decorator';
 
 @Injectable()
 export class CreateUserDto {
@@ -35,7 +36,9 @@ export class CreateUserDto {
   email: string;
 }
 
+@Injectable()
 export class VerifyEmailDto {
   @IsString()
+  @IsCodeConfirmed({ message: 'email already confirmed' })
   code: string;
 }

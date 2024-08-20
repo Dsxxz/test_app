@@ -57,22 +57,14 @@ export class UsersRepository {
       { 'emailConfirmation.confirmationCode': code },
       { $set: { 'emailConfirmation.isConfirmed': true } },
     );
-    if (!userInstance) return false;
-    await this.saveUser(userInstance);
-    return userInstance.emailConfirmation.isConfirmed;
+    console.log(userInstance?.emailConfirmation.confirmationCode);
+    return !!userInstance;
   }
 
   async getAllUsers(): Promise<UserViewModel[] | []> {
     const users = await this.userModel.find({}).exec();
     if (users) {
-      return users.map((user) => {
-        return {
-          id: user.id,
-          login: user.login,
-          email: user.email,
-          createdAt: user.createdAt,
-        };
-      });
+      return users;
     }
     return [];
   }
@@ -161,5 +153,12 @@ export class UsersRepository {
   async checkIsConfirm(user: UserDocument) {
     const res = await this.userModel.findOne(user._id);
     return res ? res.emailConfirmation.isConfirmed : false;
+  }
+
+  async findUserByCode(code: string) {
+    const user = await this.userModel.findOne({
+      'emailConfirmation.confirmationCode': code,
+    });
+    return user ? user.emailConfirmation.isConfirmed : false;
   }
 }

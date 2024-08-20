@@ -9,14 +9,14 @@ import {
   Res,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
+import { CreateAuthLoginDto } from './dto/create-auth-login-dto';
 import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
 import { VerifyEmailDto } from '../users/models/users.create.dto';
-import { RegistrationUserDTO } from './dto/registrationUserDTO';
-import { Email_Auth_DTO } from './dto/email_auth_DTO';
+import { RegistrationUserDTO } from './dto/registration-user-DTO';
+import { RegistrationEmailDTO } from './dto/registration-email-DTO';
 
 @Controller('auth')
 export class AuthController {
@@ -27,7 +27,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   async registrateUser(
-    @Body() registrateDTO: CreateAuthDto,
+    @Body() registrateDTO: CreateAuthLoginDto,
     @Res() res: Response,
   ) {
     const user = await this.userService.loginUser(registrateDTO);
@@ -63,7 +63,7 @@ export class AuthController {
 
   @Post('registration-email-resending')
   @HttpCode(204)
-  async emailResending(@Body() email_Auth_DTO: Email_Auth_DTO) {
+  async emailResending(@Body() email_Auth_DTO: RegistrationEmailDTO) {
     return this.authService.emailResending(email_Auth_DTO.email);
   }
 }

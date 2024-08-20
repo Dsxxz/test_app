@@ -8,8 +8,8 @@ import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants/jwtConstants';
 import bcrypt from 'bcrypt';
 import { MailAdapter } from '../infrastructure/mail.adapter';
-import { RegistrationUserDTO } from './dto/registrationUserDTO';
-import { exceptionResponseType } from '../settings/types/exception.response.type';
+import { RegistrationUserDTO } from './dto/registration-user-DTO';
+import { ObjectId } from 'mongodb';
 
 @Injectable()
 export class AuthService {
@@ -60,36 +60,11 @@ export class AuthService {
     if (!user) {
       throw new BadRequestException('user does not exist');
     }
-    if (user.emailConfirmation.isConfirmed) {
-      throw new BadRequestException('user already confirmed');
-    }
     const code = await this.usersService.registrateConfirmCode(user._id);
     return this.mailService.emailResending(user.email, code);
   }
 
   async registrateUsingEmail(code: string) {
-    // Проверка правильности кода
-    const isCorrectCode = await this.usersService.checkIsCorrectCode(code);
-    if (!isCorrectCode) {
-      throw new BadRequestException({
-        errorsMessages: [
-          { message: 'code is already confirmed', field: 'code' },
-        ],
-      } as exceptionResponseType);
-    }
-    // Проверка подтвержденного кода
-    const isConfirmCode = await this.usersService.checkIsConfirm(code);
-    // Логика обработки результата
-
-    if (isConfirmCode) {
-      throw new BadRequestException({
-        errorsMessages: [
-          { message: 'code is already confirmed', field: 'code' },
-        ],
-      } as exceptionResponseType);
-    }
-
-    // Обновление подтверждения
     return this.usersService.updateConfirmationIsConfirmed(code);
   }
 
@@ -99,13 +74,14 @@ export class AuthService {
       throw new Error('something went wrong when creating user');
     }
     try {
-      const mail = await this.mailService.sendConfirmCode(
-        newUser.email,
-        newUser.email,
+      const code = await this.usersService.registrateConfirmCode(
+        new ObjectId(newUser.id),
       );
+      const mail = await this.mailService.sendConfirmCode(newUser.email, code);
       if (!mail) {
         return this.usersService.deleteUserById(newUser.id);
       }
+      return true;
     } catch (e) {
       console.log(e);
     }

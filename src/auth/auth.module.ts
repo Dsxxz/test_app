@@ -12,6 +12,8 @@ import { BasicStrategy } from './strategies/basic.strategy';
 import { ConfigModule } from '@nestjs/config';
 import { IsUserAlreadyExistConstraint } from '../validation/unique.login.decorator';
 import { IsEmailExistConstraint } from '../validation/unique.email.decorator';
+import { IsCodeAlreadyConfirmed } from '../validation/confirmation.code.decorator';
+import { IsEmailAlreadyConfirmed } from '../validation/confirmation.email.decorator';
 
 @Module({
   imports: [
@@ -32,6 +34,8 @@ import { IsEmailExistConstraint } from '../validation/unique.email.decorator';
     BasicStrategy,
     IsUserAlreadyExistConstraint,
     IsEmailExistConstraint,
+    IsCodeAlreadyConfirmed,
+    IsEmailAlreadyConfirmed,
   ],
 })
 export class AuthModule {}
