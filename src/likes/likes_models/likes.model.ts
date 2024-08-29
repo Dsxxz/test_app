@@ -10,6 +10,8 @@ export class LikeModel {
   userId: string;
   @Prop()
   login: string;
+  @Prop()
+  commentId: string;
 }
 
 export const LikeSchema = SchemaFactory.createForClass(LikeModel);

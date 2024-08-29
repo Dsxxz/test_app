@@ -10,6 +10,9 @@ import {
   HttpStatus,
   Delete,
   Res,
+  UseGuards,
+  Request,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { PostService } from './posts.service';
@@ -18,6 +21,10 @@ import { InputQueryDto } from '../helpers/pagination/input.query.dto';
 import { BlogService } from '../blogs/blogs.service';
 import { PostQueryRepo } from './posts.query.repo';
 import { PostViewModel } from './models/post.view.model';
+import { CommentCreateDTO } from '../comments/models/comment.create.dto';
+import { CommentService } from '../comments/comment.service';
+import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
+import { UsersService } from '../users/users.service';
 
 @Controller('/posts')
 export class PostsController {
@@ -25,6 +32,8 @@ export class PostsController {
     protected postService: PostService,
     protected blogService: BlogService,
     protected postQueryRepo: PostQueryRepo,
+    protected commentPostService: CommentService,
+    protected userService: UsersService,
   ) {}
 
   @Get(':id')
@@ -52,6 +61,7 @@ export class PostsController {
   }
 
   @Post()
+  @UseGuards(JwtAuthGuard)
   async createPostForBlog(@Body() dto: PostsModelDto, @Res() res: Response) {
     const foundBlog = await this.blogService.findBlogById(dto.blogId);
     if (!foundBlog) {
@@ -67,6 +77,7 @@ export class PostsController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async updatePost(
     @Param('id') id: string,
     @Body() dto: Partial<PostsModelDto>,
@@ -82,6 +93,7 @@ export class PostsController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   async deletePost(@Param('id') id: string, @Res() res: Response) {
     const post = await this.postService.findPostById(id);
     if (!post) {
@@ -95,5 +107,25 @@ export class PostsController {
   @Get(':id/comments')
   async getCommentsForPostById() {
     return;
+  }
+  @Post(':id/comments')
+  @UseGuards(JwtAuthGuard)
+  async createCommentForPost(
+    @Body() dto: CommentCreateDTO,
+    @Request() request: any,
+  ) {
+    console.log(request);
+    const userName = request.user.username;
+    console.log(userName);
+    const user = await this.userService.findOne(userName);
+    if (!user) {
+      throw new UnauthorizedException('user not found');
+    }
+    const userDTO = {
+      userId: user.id,
+      userLogin: user.login,
+    };
+    console.log(userDTO);
+    return this.commentPostService.createCommentForPost(dto, userDTO);
   }
 }

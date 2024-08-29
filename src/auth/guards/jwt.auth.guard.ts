@@ -23,6 +23,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         secret: jwtConstants.secret,
       });
       request['user'] = payload;
+      request['user']['userId'] = payload.userId;
     } catch {
       throw new UnauthorizedException();
     }

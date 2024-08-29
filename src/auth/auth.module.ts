@@ -23,6 +23,7 @@ import { IsEmailAlreadyConfirmed } from '../validation/confirmation.email.decora
     JwtModule.register({
       secret: '' + jwtConstants.secret,
       signOptions: { expiresIn: '5min' },
+      global: true,
     }),
   ],
   controllers: [AuthController],
