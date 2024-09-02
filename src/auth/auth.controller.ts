@@ -35,7 +35,7 @@ export class AuthController {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
-    res.cookie('accessToken ', token.accessToken, {
+    res.cookie('refreshToken ', token.accessToken, {
       httpOnly: true,
       secure: true,
     });
