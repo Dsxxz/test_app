@@ -26,7 +26,7 @@ import { CommentService } from '../comments/comment.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { BearerAuthGuard } from '../auth/guards/bearer.guard';
-import { UpdateLikeDto } from '../likes/likes_models/update.like.DTO';
+import { BasicAuthGuard } from '../auth/guards/basic.auth.guard';
 
 @Controller('/posts')
 export class PostsController {
@@ -63,7 +63,7 @@ export class PostsController {
   }
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BasicAuthGuard)
   async createPostForBlog(@Body() dto: PostsModelDto, @Res() res: Response) {
     const foundBlog = await this.blogService.findBlogById(dto.blogId);
     if (!foundBlog) {
