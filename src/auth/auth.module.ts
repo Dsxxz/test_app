@@ -14,6 +14,7 @@ import { IsUserAlreadyExistConstraint } from '../validation/unique.login.decorat
 import { IsEmailExistConstraint } from '../validation/unique.email.decorator';
 import { IsCodeAlreadyConfirmed } from '../validation/confirmation.code.decorator';
 import { IsEmailAlreadyConfirmed } from '../validation/confirmation.email.decorator';
+import { BearerStrategy } from './strategies/bearer.strategy';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { IsEmailAlreadyConfirmed } from '../validation/confirmation.email.decora
     IsEmailExistConstraint,
     IsCodeAlreadyConfirmed,
     IsEmailAlreadyConfirmed,
+    BearerStrategy,
   ],
 })
 export class AuthModule {}

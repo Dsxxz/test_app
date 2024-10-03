@@ -25,6 +25,8 @@ import { CommentCreateDTO } from '../comments/models/comment.create.dto';
 import { CommentService } from '../comments/comment.service';
 import { JwtAuthGuard } from '../auth/guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
+import { BearerAuthGuard } from '../auth/guards/bearer.guard';
+import { UpdateLikeDto } from '../likes/likes_models/update.like.DTO';
 
 @Controller('/posts')
 export class PostsController {
@@ -109,7 +111,7 @@ export class PostsController {
     return;
   }
   @Post(':id/comments')
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BearerAuthGuard)
   async createCommentForPost(
     @Body() dto: CommentCreateDTO,
     @Request() request: any,
@@ -128,4 +130,11 @@ export class PostsController {
     console.log(userDTO);
     return this.commentPostService.createCommentForPost(dto, userDTO);
   }
+  // @Put(':id/like-status')
+  // @UseGuards(BearerAuthGuard)
+  // async updatePostLikeStatus(
+  //   @Body() status: UpdateLikeDto,
+  //   @Res() res: Response,
+  //   @Request() request: any,
+  // ) {}
 }

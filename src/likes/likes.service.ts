@@ -12,6 +12,10 @@ export class LikesService {
     likeStatus: LikeEnum,
     user: UserDocument,
   ) {
-    return this.likesRepository.updateLikeStatus(commentId, likeStatus, user);
+    return this.likesRepository.updateCommentLikeStatus(
+      commentId,
+      likeStatus,
+      user,
+    );
   }
 }

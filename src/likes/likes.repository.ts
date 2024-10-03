@@ -13,8 +13,10 @@ export class LikesRepository {
   ) {}
   private likeComments: LikeDocument[] = [];
   private dislikeComments: LikeDocument[] = [];
+  private likePosts: LikeDocument[] = [];
+  private dislikePosts: LikeDocument[] = [];
 
-  async updateLikeStatus(
+  async updateCommentLikeStatus(
     commentId: string,
     likeStatus: LikeEnum,
     user: UserDocument,
@@ -79,7 +81,7 @@ export class LikesRepository {
         this.removeLike(like);
         break;
       default:
-        console.error('НSomething went wrong while updating like-status');
+        console.error('Something went wrong while updating like-status');
         break;
     }
   }

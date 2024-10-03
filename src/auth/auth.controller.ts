@@ -10,13 +10,13 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateAuthLoginDto } from './dto/create-auth-login-dto';
-import { JwtAuthGuard } from './guards/jwt.auth.guard';
 import { UsersService } from '../users/users.service';
 import { Response } from 'express';
 import { CurrentUserId } from '../helpers/user.decorator';
 import { VerifyEmailDto } from '../users/models/users.create.dto';
 import { RegistrationUserDTO } from './dto/registration-user-DTO';
 import { RegistrationEmailDTO } from './dto/registration-email-DTO';
+import { BearerAuthGuard } from './guards/bearer.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -35,7 +35,7 @@ export class AuthController {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const token = await this.authService.loginUser(user);
-    res.cookie('refreshToken ', token.accessToken, {
+    res.cookie('refreshToken ', token.refreshToken, {
       httpOnly: true,
       secure: true,
     });
@@ -53,7 +53,7 @@ export class AuthController {
     return this.authService.registrateUsingEmail(verifyEmailDto.code);
   }
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(BearerAuthGuard)
   @HttpCode(200)
   @Get('me')
   async getUser(@CurrentUserId() currentUserId: any) {

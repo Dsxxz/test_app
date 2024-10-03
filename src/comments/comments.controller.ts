@@ -102,10 +102,11 @@ export class CommentsController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    return this.likesService.updateLikeStatus(
+    await this.likesService.updateLikeStatus(
       commentId,
       status.likeStatus,
       user,
     );
+    return { likeStatus: status.likeStatus };
   }
 }
