@@ -44,15 +44,19 @@ export class AuthService {
   }
 
   async loginUser(userPayload: any) {
-    const payload: { username: any; sub: string } = {
+    const payload: { username: string; sub: string } = {
       username: userPayload.login,
       sub: userPayload.id,
     };
-    return {
-      refreshToken: this.jwtService.sign(payload, {
-        secret: jwtConstants.refreshTokenSecret,
-      }),
-    };
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: jwtConstants.refreshTokenSecret,
+      expiresIn: '24h',
+    });
+    const accessToken = this.jwtService.sign(payload, {
+      secret: jwtConstants.accessTokenSecret,
+      expiresIn: '5m',
+    });
+    return { refreshToken, accessToken };
   }
 
   async emailResending(email: string) {

@@ -19,8 +19,13 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       throw new UnauthorizedException();
     }
     try {
+      const isAccessTokenValid = await this.jwtService.verify(token, {
+        secret: jwtConstants.accessTokenSecret,
+      });
       const payload: any = await this.jwtService.verify(token, {
-        secret: jwtConstants.secret,
+        secret: isAccessTokenValid
+          ? jwtConstants.accessTokenSecret
+          : jwtConstants.refreshTokenSecret,
       });
       request['user'] = payload;
       request['user']['userId'] = payload.userId;

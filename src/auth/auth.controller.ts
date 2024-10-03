@@ -34,12 +34,12 @@ export class AuthController {
     if (!user) {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
-    const token = await this.authService.loginUser(user);
-    res.cookie('refreshToken ', token.refreshToken, {
+    const tokens = await this.authService.loginUser(user);
+    res.cookie(tokens.refreshToken, {
       httpOnly: true,
       secure: true,
     });
-    return res.send(token);
+    return res.send(tokens.accessToken);
   }
   @Post('registration')
   @HttpCode(204)
