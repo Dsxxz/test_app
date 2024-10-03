@@ -35,11 +35,11 @@ export class AuthController {
       return res.sendStatus(HttpStatus.UNAUTHORIZED);
     }
     const tokens = await this.authService.loginUser(user);
-    res.cookie(tokens.refreshToken, {
+    res.cookie('refreshToken', tokens.refreshToken, {
       httpOnly: true,
       secure: true,
     });
-    return res.send(tokens.accessToken);
+    return res.send({ accessToken: tokens.accessToken });
   }
   @Post('registration')
   @HttpCode(204)
