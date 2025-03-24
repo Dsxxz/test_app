@@ -21,7 +21,6 @@ import { PostQueryRepo } from "./features/posts/infrastructure/posts.query.repo"
 import { PostRepository } from "./features/posts/infrastructure/posts.repository";
 import { CommentService } from "./features/comments/application/comment.service";
 import { CommentsRepository } from "./features/comments/infrastructure/comments.repository";
-import { LikesService } from "./features/likes/application/likes.service";
 import { UserQueryRepository } from "./features/users/infrastructure/users.query-repository";
 
 const mongoUri = mongoData.mongoRemote || mongoData.mongoLocal;
@@ -55,7 +54,6 @@ const mongoUri = mongoData.mongoRemote || mongoData.mongoLocal;
     PostRepository,
     CommentService,
     CommentsRepository,
-    LikesService,
     UserQueryRepository,
   ],
 })

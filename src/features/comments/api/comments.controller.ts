@@ -12,14 +12,12 @@ import {
   Put,
   Body,
   ForbiddenException,
-  Inject,
 } from '@nestjs/common';
 import { CommentService } from '../application/comment.service';
 import { JwtAuthGuard } from '../../../core/guards/jwt.auth.guard';
 import { Response } from 'express';
 import { CommentCreateDTO } from './input-dto/comment.create.dto';
 import { UpdateLikeDto } from '../../likes/dto/update.like.DTO';
-import { LikesService } from '../../likes/application/likes.service';
 import { UsersService } from '../../users/application/users.service';
 
 @Controller('api/comments')
@@ -27,7 +25,6 @@ export class CommentsController {
   constructor(
     private commentService: CommentService,
     private userService: UsersService,
-    @Inject(LikesService) private likesService: LikesService,
   ) {}
 
   @Get(':id')
@@ -102,11 +99,11 @@ export class CommentsController {
     if (!user) {
       throw new UnauthorizedException();
     }
-    await this.likesService.updateLikeStatus(
-      commentId,
-      status.likeStatus,
-      user,
-    );
+    // await this.likesService.updateLikeStatus(
+    //   commentId,
+    //   status.likeStatus,
+    //   user,
+    // );
     return { likeStatus: status.likeStatus };
   }
 }

@@ -8,11 +8,10 @@ export class LikePostInfoType {
   likesCount: string[];
   @Prop([String])
   dislikeCount: string[];
-  @Prop({ type: LikeEnum, default: LikeEnum.None })
+  @Prop({ type: String, default: LikeEnum.None })
   myStatus: string;
   @Prop({type: [NewLikeSchema], required: true})
   newestLikes:NewLikeModel[]
 }
 
 export const LikeInfoSchema = SchemaFactory.createForClass(LikePostInfoType);
-LikeInfoSchema.loadClass(LikePostInfoType);
