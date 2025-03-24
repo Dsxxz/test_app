@@ -50,8 +50,27 @@ describe('Post-Controller (e2e)', ()=>{
       .set('Authorization', 'Basic '
         + btoa(`${basicConstants.username}:${basicConstants.password}`))
       .expect(201)
-        expect(response.body).toHaveProperty('items');
-        expect(response.body.items).toBeInstanceOf(Array);
-        expect(response.body.length).toBeGreaterThan(0);
+        expect(response.body).toHaveProperty('blogName');
+        expect(response.body).toHaveProperty('content');
+        expect(response.body).toHaveProperty('extendedLikesInfo');
+        expect(response.body).toHaveProperty('id');
+        expect(response.body).toHaveProperty('title');
+        expect(response.body).toHaveProperty('shortDescription');
+        expect(response.body).toHaveProperty('blogId');
   })
+  it("(/ GET) (e2e)should return creating post", async () => {
+    const posts = await request(httpServer).get('/posts').expect(200)
+    expect(posts.body.items.length).toBeGreaterThan(0);
+    const post = posts.body.items[0];
+    await request(httpServer).get(`/posts/${post.id}`).expect(200)
+  });
+  it("(/ GET) (e2e)should all posts", async () => {
+    const posts = await request(httpServer).get('/posts').expect(200)
+    expect(posts.body.items.length).toBeGreaterThan(0);
+    expect(posts.body).toHaveProperty('pagesCount')
+    expect(posts.body).toHaveProperty('page')
+    expect(posts.body).toHaveProperty('pageSize')
+    expect(posts.body).toHaveProperty('totalCount')
+    expect(posts.body).toHaveProperty('items')
+  });
 })

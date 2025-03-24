@@ -1,21 +1,16 @@
-import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
-import { PostDocument, PostModel } from '../domain/posts.entity';
-import { PostsModelDto } from '../dto/posts.model.dto';
-import { EnumDirection } from '../../../core/dto/pagination/enum.direction';
-import {
-  getPageInfo,
-  InputQueryDto,
-  QueryPostDto,
-} from '../../../core/dto/pagination/input.query.dto';
+import { Injectable } from "@nestjs/common";
+import { Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { PostDocument, PostModel } from "../domain/posts.entity";
+import { PostsModelDto } from "../dto/posts.model.dto";
+import { EnumDirection } from "../../../core/dto/pagination/enum.direction";
+import { getPageInfo, InputQueryDto, QueryPostDto } from "../../../core/dto/pagination/input.query.dto";
 import { NewLikeViewModel, PostViewModel } from "../api/view-dto/post.view.model";
-import { LikeEnum } from '../../likes/dto/likes.enum.model';
-import { ObjectId } from 'mongodb';
-import { Paginator } from '../../../core/dto/pagination/paginator';
+import { LikeEnum } from "../../likes/dto/likes.enum.model";
+import { ObjectId } from "mongodb";
+import { Paginator } from "../../../core/dto/pagination/paginator";
 import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
 import { NewLikeModel } from "../../likes/dto/newLike.type";
-import { UserDocument } from "../../users/dto/user.type";
 
 @Injectable()
 export class PostRepository {
@@ -77,7 +72,7 @@ export class PostRepository {
   async deletePost(id: ObjectId) {
     return this.postModel.deleteOne({ _id: id });
   }
-  convertToViewModelUtility(post: PostModel): PostViewModel {
+  convertToViewModelUtility(post: PostModel, userId?: string): PostViewModel {
     const newestLikes = post.extendedLikesInfo.newestLikes;
     const lastThreeLikes: NewLikeViewModel[] = [];
         if(newestLikes){
@@ -92,6 +87,15 @@ export class PostRepository {
             });
           lastThreeLikes.push(...filteredLikes.slice(0, 3));
         }
+    if(userId){
+      const userLike = post.extendedLikesInfo.dislikeCount.includes(userId);
+      if(userLike)post.extendedLikesInfo.myStatus = LikeEnum.Like;
+      const userDislike = post.extendedLikesInfo.likesCount.includes(userId);
+      if(userDislike)post.extendedLikesInfo.myStatus = LikeEnum.Dislike;
+    }
+    else{
+      post.extendedLikesInfo.myStatus = LikeEnum.None;
+    }
     return {
       id: post.id,
       title: post.title,
@@ -104,12 +108,12 @@ export class PostRepository {
         likesCount: post.extendedLikesInfo.likesCount?.length || 0,
         dislikesCount: post.extendedLikesInfo.dislikeCount?.length || 0,
         myStatus: post.extendedLikesInfo.myStatus as LikeEnum,
-        newestLikes: lastThreeLikes || [],
+        newestLikes: lastThreeLikes,
       },
     };
   }
-  async convertToViewModel(posts: PostModel[] ):Promise< PostViewModel[]  >{
-    return  posts.map((el) => this.convertToViewModelUtility(el))
+  async convertToViewModel(posts: PostModel[], userId?: string):Promise< PostViewModel[]  >{
+    return  posts.map((el) => this.convertToViewModelUtility(el,userId));
   }
 
   convertToViewPagination(
@@ -137,7 +141,7 @@ export class PostRepository {
     };
   }
 
-  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user?: UserDocument) {
+  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user: any) {
     const post = await this.postModel.findById(id);
     if(!post){
       throw new Error('updatePostLikeStatus: post not found')

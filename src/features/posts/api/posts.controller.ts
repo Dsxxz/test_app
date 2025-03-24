@@ -4,17 +4,18 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
   Param,
   Post,
   Put,
   Query,
-  Request,
+  Req,
   Res,
   UnauthorizedException,
   UseGuards
 } from "@nestjs/common";
-import { Response } from "express";
+import {  Response } from "express";
 import { PostService } from "../application/posts.service";
 import { PostsModelDto } from "../dto/posts.model.dto";
 import { InputQueryDto } from "../../../core/dto/pagination/input.query.dto";
@@ -39,8 +40,10 @@ export class PostsController {
   ) {}
 
   @Get(':id')
-  async getOnePost(@Param('id') id: string, @Res() res: Response, @Request() request: any) {
-    const post = await this.postService.findPostById(id);
+  async getOnePost(@Param('id') id: string, @Res() res: Response, @Req() request: any) {
+    const user = request.user;
+    console.log("user", user);
+    const post = await this.postService.findPostById(id, user?._id.toString());
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
@@ -48,7 +51,7 @@ export class PostsController {
   }
 
   @Get()
-  async findAllPosts(@Query() dto: InputQueryDto, @Res() res: Response) {
+  async findAllPosts(@Query() dto: InputQueryDto, @Res() res: Response, @Req() request: any) {
     const queryPostDto = await this.postQueryRepo.getPageInfo(dto);
     const posts: PostsModelDto[] =
       await this.postQueryRepo.findByQuery(queryPostDto);
@@ -114,7 +117,7 @@ export class PostsController {
   @UseGuards(BearerAuthGuard)
   async createCommentForPost(
     @Body() dto: CommentCreateDTO,
-    @Request() request: any,
+    @Req() request: any,
   ) {
     const userName = request.user.username;
     const user = await this.userService.findOne(userName);
@@ -132,14 +135,17 @@ export class PostsController {
   async updatePostLikeStatus(
     @Param('id') id: string,
     @Body() likeStatus: UpdateLikeDto,
-    @Request() request: any,
     @Res() res: Response,
+    @Req() req: any,
   ) {
     const post = await this.postService.findPostById(id);
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
-    return this.postService.updatePostLikeStatus(post.id, likeStatus, request.user);
+    if(!req.user){
+      throw new HttpException('incorrect credential', HttpStatus.UNAUTHORIZED)
+    }
+    return this.postService.updatePostLikeStatus(post.id, likeStatus, req.user);
   }
   //todo: create endpoint: post/:id/like-status;
   //todo: take userId from JWT;
