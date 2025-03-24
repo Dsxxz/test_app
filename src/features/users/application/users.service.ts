@@ -28,9 +28,6 @@ export class UsersService {
       : null;
   }
 
-  // async checkIsCorrectCode(code: string) {
-  //   return this.usersRepository.checkIsCorrectCode(code);
-  // }
   async deleteUserById(userId: string) {
     return this.usersRepository.deleteUserById(userId);
   }
@@ -46,15 +43,6 @@ export class UsersService {
   async findOne(loginOrEmail: string) {
     return this.usersRepository.findOne(loginOrEmail);
   }
-
-  // async getAllUsers() {
-  //   return this.usersRepository.getAllUsers();
-  // }
-
-  // async checkIsConfirm(code: string): Promise<boolean> {
-  //   const user = await this.usersRepository.findOne(code);
-  //   return user ? user.emailConfirmation.isConfirmed : false;
-  // }
 
   async updateConfirmationIsConfirmed(code: string) {
     return this.usersRepository.updateConfirmationIsConfirmed(code);
@@ -96,4 +84,5 @@ export class UsersService {
     //TODO:change this DTO;
     return this.usersRepository.updatePasswordData(dto, userId);
   }
+
 }

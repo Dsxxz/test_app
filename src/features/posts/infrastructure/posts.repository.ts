@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { PostDocument, PostModel } from '../domain/posts.model';
+import { PostDocument, PostModel } from '../domain/posts.entity';
 import { PostsModelDto } from '../dto/posts.model.dto';
 import { EnumDirection } from '../../../core/dto/pagination/enum.direction';
 import {
@@ -9,10 +9,13 @@ import {
   InputQueryDto,
   QueryPostDto,
 } from '../../../core/dto/pagination/input.query.dto';
-import { PostViewModel } from '../api/view-dto/post.view.model';
+import { NewLikeViewModel, PostViewModel } from "../api/view-dto/post.view.model";
 import { LikeEnum } from '../../likes/dto/likes.enum.model';
 import { ObjectId } from 'mongodb';
 import { Paginator } from '../../../core/dto/pagination/paginator';
+import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
+import { NewLikeModel } from "../../likes/dto/newLike.type";
+import { UserDocument } from "../../users/dto/user.type";
 
 @Injectable()
 export class PostRepository {
@@ -30,6 +33,7 @@ export class PostRepository {
     post.id = post._id.toString();
     post.blogName = blogName;
     post.blogId = dto.blogId;
+    post.extendedLikesInfo = {likesCount:[],dislikeCount:[],myStatus:LikeEnum.None, newestLikes: []  }
     return await this.savePost(post);
   }
 
@@ -74,6 +78,17 @@ export class PostRepository {
     return this.postModel.deleteOne({ _id: id });
   }
   convertToViewModelUtility(post: PostModel): PostViewModel {
+    const newestLikes = post.extendedLikesInfo.newestLikes;
+    const filteredLikes = newestLikes
+      .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
+      .map(el => {
+        return {
+          addedAt: el.addedAt.toISOString(),
+          userId: el.userId.toString(),
+          login: el.login,
+        };
+      });
+    const lastThreeLikes: NewLikeViewModel[] = filteredLikes.slice(0, 3);
     return {
       id: post.id,
       title: post.title,
@@ -83,10 +98,10 @@ export class PostRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeEnum.None,
-        newestLikes: [],
+        likesCount: post.extendedLikesInfo.likesCount.length,
+        dislikesCount: post.extendedLikesInfo.dislikeCount.length,
+        myStatus: post.extendedLikesInfo.myStatus as LikeEnum,
+        newestLikes: lastThreeLikes
       },
     };
   }
@@ -117,5 +132,60 @@ export class PostRepository {
       searchNameTerm: pageInfo.searchNameTerm,
       totalCount: totalCount,
     };
+  }
+
+  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user?: UserDocument) {
+    const post = await this.postModel.findById(id);
+    console.log(user, user?._id);
+    if(!post){
+      throw new Error('updatePostLikeStatus: post not found')
+    }
+    if(!user || !user.id){
+      //todo: change return type
+      return post;
+    }
+
+    const dislikeIndex = post.extendedLikesInfo.dislikeCount.indexOf(user.id);
+    const likeIndex = post.extendedLikesInfo.likesCount.indexOf(user.id);
+
+    switch (likeStatus.likeStatus) {
+
+      case LikeEnum.None:
+        if(dislikeIndex !==-1){
+          post.extendedLikesInfo.dislikeCount.splice(dislikeIndex, 1);
+        }
+        if(likeIndex !==-1){
+          post.extendedLikesInfo.dislikeCount.splice(likeIndex, 1);
+        }
+        break;
+
+      case LikeEnum.Like:
+        if (!post.extendedLikesInfo.likesCount.includes(user.id)) {
+          post.extendedLikesInfo.likesCount.push(user.id);
+        }
+        if(dislikeIndex !==-1){
+          post.extendedLikesInfo.dislikeCount.splice(dislikeIndex, 1);
+        }
+        const newLike:NewLikeModel = { addedAt:new Date(),userId: new ObjectId(user.id), login: user.login};
+        post.extendedLikesInfo.newestLikes.push(newLike);
+        post.extendedLikesInfo.myStatus = LikeEnum.Like;
+        break;
+
+      case LikeEnum.Dislike:
+        if(!post.extendedLikesInfo.dislikeCount.includes(user.id)){
+          post.extendedLikesInfo.dislikeCount.push(user.id);
+        }
+        if(likeIndex !==-1){
+          post.extendedLikesInfo.dislikeCount.splice(likeIndex, 1);
+        }
+        post.extendedLikesInfo.myStatus = LikeEnum.Dislike;
+        break;
+
+
+      default: console.error('update post like status: unknown like status')
+
+    }
+
+    return this.savePost(post);
   }
 }

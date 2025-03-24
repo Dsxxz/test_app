@@ -79,7 +79,8 @@ export class UsersRepository {
   }
 
   async findUserById(userId: ObjectId) {
-    return this.userModel.findOne({ _id: userId });
+    const user = await this.userModel.findOne({ _id: userId });
+    return user ? user as UserDocument : null;
   }
 
   async deleteUserById(userId: string) {

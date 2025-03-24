@@ -1,4 +1,4 @@
-import { BlogModel } from '../../domain/blogs.model';
+import { BlogModel } from '../../domain/blogs.entity';
 
 export const ConvertBlogToViewModel = (blog: BlogModel) => {
   return {

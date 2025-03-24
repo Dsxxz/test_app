@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InputQueryDto } from '../../../core/dto/pagination/input.query.dto';
-import { BlogModel } from '../domain/blogs.model';
+import { BlogModel } from '../domain/blogs.entity';
 import { EnumDirection } from '../../../core/dto/pagination/enum.direction';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';

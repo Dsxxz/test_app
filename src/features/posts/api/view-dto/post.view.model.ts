@@ -1,5 +1,11 @@
 import { LikeEnum } from '../../../likes/dto/likes.enum.model';
-import { LikeModel } from '../../../likes/domain/likes.model';
+import { NewLikeModel } from "../../../likes/dto/newLike.type";
+
+export class NewLikeViewModel {
+  addedAt:string;
+  userId:string;
+  login:string;
+}
 
 export type PostViewModel = {
   id: string;
@@ -13,6 +19,6 @@ export type PostViewModel = {
     likesCount: number;
     dislikesCount: number;
     myStatus: LikeEnum;
-    newestLikes: LikeModel[];
+    newestLikes: NewLikeViewModel[];
   };
 };

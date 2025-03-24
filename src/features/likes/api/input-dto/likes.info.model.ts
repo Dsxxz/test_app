@@ -1,16 +1,18 @@
-import { HydratedDocument } from 'mongoose';
-import { Prop, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { LikeEnum } from '../../dto/likes.enum.model';
+import { NewLikeModel, NewLikeSchema } from "../../dto/newLike.type";
 
-export type LikesDocument = HydratedDocument<LikePostInfoType>;
-
+@Schema()
 export class LikePostInfoType {
   @Prop([String])
   likesCount: string[];
   @Prop([String])
   dislikeCount: string[];
-  @Prop({ type: LikeEnum })
+  @Prop({ type: LikeEnum, default: LikeEnum.None })
   myStatus: string;
+  @Prop({type: [NewLikeSchema], required: true})
+  newestLikes:NewLikeModel[]
 }
 
 export const LikeInfoSchema = SchemaFactory.createForClass(LikePostInfoType);
+LikeInfoSchema.loadClass(LikePostInfoType);

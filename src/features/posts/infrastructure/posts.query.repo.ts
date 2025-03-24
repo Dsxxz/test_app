@@ -4,7 +4,7 @@ import {
   QueryPostDto,
 } from '../../../core/dto/pagination/input.query.dto';
 import { PostRepository } from './posts.repository';
-import { PostModel } from '../domain/posts.model';
+import { PostModel } from '../domain/posts.entity';
 import { PostViewModel } from '../api/view-dto/post.view.model';
 import { PostsModelDto } from '../dto/posts.model.dto';
 

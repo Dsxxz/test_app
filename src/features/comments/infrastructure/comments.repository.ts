@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { commentDocument, CommentModel } from '../domain/comments.model';
+import { commentDocument, CommentModel } from '../domain/comment.entity';
 import { Model } from 'mongoose';
 import { UserCommentDto } from '../dto/user.comment.DTO';
 import { CommentCreateDTO } from '../api/input-dto/comment.create.dto';

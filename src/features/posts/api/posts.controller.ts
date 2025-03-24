@@ -1,33 +1,35 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  Query,
   HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
-  HttpStatus,
-  Delete,
-  Res,
-  UseGuards,
+  Query,
   Request,
+  Res,
+  Scope,
   UnauthorizedException,
-} from '@nestjs/common';
-import { Response } from 'express';
-import { PostService } from '../application/posts.service';
-import { PostsModelDto } from '../dto/posts.model.dto';
-import { InputQueryDto } from '../../../core/dto/pagination/input.query.dto';
-import { BlogService } from '../../blogs/application/blogs.service';
-import { PostQueryRepo } from '../infrastructure/posts.query.repo';
-import { CommentCreateDTO } from '../../comments/api/input-dto/comment.create.dto';
-import { CommentService } from '../../comments/application/comment.service';
-import { JwtAuthGuard } from '../../../core/guards/jwt.auth.guard';
-import { BearerAuthGuard } from '../../../core/guards/bearer.guard';
-import { BasicAuthGuard } from '../../../core/guards/basic.auth.guard';
-import { UsersService } from '../../users/application/users.service';
+  UseGuards
+} from "@nestjs/common";
+import { Response } from "express";
+import { PostService } from "../application/posts.service";
+import { PostsModelDto } from "../dto/posts.model.dto";
+import { InputQueryDto } from "../../../core/dto/pagination/input.query.dto";
+import { BlogService } from "../../blogs/application/blogs.service";
+import { PostQueryRepo } from "../infrastructure/posts.query.repo";
+import { CommentCreateDTO } from "../../comments/api/input-dto/comment.create.dto";
+import { CommentService } from "../../comments/application/comment.service";
+import { JwtAuthGuard } from "../../../core/guards/jwt.auth.guard";
+import { BearerAuthGuard } from "../../../core/guards/bearer.guard";
+import { BasicAuthGuard } from "../../../core/guards/basic.auth.guard";
+import { UsersService } from "../../users/application/users.service";
+import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
 
-@Controller('/posts')
+@Controller({scope: Scope.DEFAULT, path: 'posts'})
 export class PostsController {
   constructor(
     protected postService: PostService,
@@ -40,6 +42,7 @@ export class PostsController {
   @Get(':id')
   async getOnePost(@Param('id') id: string, @Res() res: Response) {
     const post = await this.postService.findPostById(id);
+    //todo: this return array, need fix to postViewModel;
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
@@ -127,11 +130,20 @@ export class PostsController {
     console.log(userDTO);
     return this.commentPostService.createCommentForPost(dto, userDTO);
   }
-  // @Put(':id/like-status')
-  // @UseGuards(BearerAuthGuard)
-  // async updatePostLikeStatus(
-  //   @Body() status: UpdateLikeDto,
-  //   @Res() res: Response,
-  //   @Request() request: any,
-  // ) {}
+
+  @Put(':id/like-status')
+  async updatePostLikeStatus(
+    @Param('id') id: string,
+    @Body() likeStatus: UpdateLikeDto,
+    @Request() request: any,
+    @Res() res: Response,
+  ) {
+    const post = await this.postService.findPostById(id);
+    if (!post) {
+      return res.sendStatus(HttpStatus.NOT_FOUND);
+    }
+    return this.postService.updatePostLikeStatus(post.id, likeStatus, request.user);
+  }
+  //todo: create endpoint: post/:id/like-status;
+  //todo: take userId from JWT;
 }

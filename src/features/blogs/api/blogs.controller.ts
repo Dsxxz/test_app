@@ -25,6 +25,7 @@ import { Paginator } from '../../../core/dto/pagination/paginator';
 import { BlogQueryRepo } from '../infrastructure/blog.query.repo';
 import { PostQueryRepo } from '../../posts/infrastructure/posts.query.repo';
 import { BasicAuthGuard } from '../../../core/guards/basic.auth.guard';
+import { ConvertBlogToViewModel } from "../application/helpers/convertBlogToViewModel";
 
 @Controller('/blogs')
 export class BlogsController {
@@ -60,14 +61,18 @@ export class BlogsController {
         items: [],
       });
     }
+    const result = blogs.map((blog) => {
+      return ConvertBlogToViewModel(blog)
+    })
 
     return Paginator.get({
       pageNumber: +pageInfo.pageNumber,
       pageSize: +pageInfo.pageSize,
       totalCount: +totalCount,
-      items: blogs,
-    });
+      items: result,
+    })
   }
+
   @Post()
   @UseGuards(BasicAuthGuard)
   async createBlog(@Body() dto: BlogCreateDto): Promise<BlogsViewModel> {

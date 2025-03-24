@@ -12,6 +12,7 @@ import { UsersService } from "../features/users/application/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { UsersRepository } from "../features/users/infrastructure/users.repository";
 import { IsEmailAlreadyRegistered } from "../core/decorators/recovery.email.code.decorator";
+import { JwtInterceptor } from "../infrastructure/interseptors/jwt.interseptor";
 
 export const authProviders= [
   AuthService,
@@ -28,4 +29,5 @@ export const authProviders= [
   UsersService,
   JwtService,
   UsersRepository,
+  JwtInterceptor
 ];

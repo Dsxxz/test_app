@@ -4,6 +4,7 @@ import { PostsModelDto } from '../dto/posts.model.dto';
 import { BlogService } from '../../blogs/application/blogs.service';
 import { PostViewModel } from '../api/view-dto/post.view.model';
 import { ObjectId } from 'mongodb';
+import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
 
 @Injectable()
 export class PostService {
@@ -11,10 +12,11 @@ export class PostService {
     @Inject(PostRepository) private readonly postRepository: PostRepository,
     @Inject(BlogService) protected blogService: BlogService,
   ) {}
-  async findPostById(id: string) {
+  async findPostById(id: string):Promise<PostViewModel | null >{
     const post = await this.postRepository.findPostById(new ObjectId(id));
     if (!post) return null;
-    return this.postRepository.convertToViewModel([post]);
+    const result = await this.postRepository.convertToViewModel([post]);
+    return post[0]
   }
 
   async createPost(dto: PostsModelDto): Promise<PostViewModel> {
@@ -36,5 +38,9 @@ export class PostService {
 
   async deletePost(id: string) {
     return this.postRepository.deletePost(new ObjectId(id));
+  }
+
+  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user?: any) {
+    return this.postRepository.updatePostLikeStatus(id,likeStatus, user);
   }
 }

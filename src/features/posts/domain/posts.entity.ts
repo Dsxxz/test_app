@@ -1,9 +1,10 @@
-import { HydratedDocument } from 'mongoose';
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from "mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
+import { LikePostInfoType } from "../../likes/api/input-dto/likes.info.model";
 
 export type PostDocument = HydratedDocument<PostModel>;
 @Schema()
-export class PostModel {
+export class PostModel  {
   @Prop()
   id: string;
 
@@ -24,6 +25,10 @@ export class PostModel {
 
   @Prop()
   createdAt: string;
+
+  @Prop({type: LikePostInfoType, required: true})
+  extendedLikesInfo: LikePostInfoType
 }
 
 export const PostSchema = SchemaFactory.createForClass(PostModel);
+PostSchema.loadClass(PostModel);
