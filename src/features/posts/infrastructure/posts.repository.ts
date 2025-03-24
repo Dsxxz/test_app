@@ -79,16 +79,19 @@ export class PostRepository {
   }
   convertToViewModelUtility(post: PostModel): PostViewModel {
     const newestLikes = post.extendedLikesInfo.newestLikes;
-    const filteredLikes = newestLikes
-      .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
-      .map(el => {
-        return {
-          addedAt: el.addedAt.toISOString(),
-          userId: el.userId.toString(),
-          login: el.login,
-        };
-      });
-    const lastThreeLikes: NewLikeViewModel[] = filteredLikes.slice(0, 3);
+    const lastThreeLikes: NewLikeViewModel[] = [];
+        if(newestLikes){
+          const filteredLikes = newestLikes
+            .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
+            .map(el => {
+              return {
+                addedAt: el.addedAt.toISOString(),
+                userId: el.userId.toString(),
+                login: el.login
+              };
+            });
+          lastThreeLikes.push(...filteredLikes.slice(0, 3));
+        }
     return {
       id: post.id,
       title: post.title,
@@ -98,10 +101,10 @@ export class PostRepository {
       blogName: post.blogName,
       createdAt: post.createdAt,
       extendedLikesInfo: {
-        likesCount: post.extendedLikesInfo.likesCount.length,
-        dislikesCount: post.extendedLikesInfo.dislikeCount.length,
+        likesCount: post.extendedLikesInfo.likesCount?.length || 0,
+        dislikesCount: post.extendedLikesInfo.dislikeCount?.length || 0,
         myStatus: post.extendedLikesInfo.myStatus as LikeEnum,
-        newestLikes: lastThreeLikes
+        newestLikes: lastThreeLikes || [],
       },
     };
   }
@@ -136,7 +139,6 @@ export class PostRepository {
 
   async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user?: UserDocument) {
     const post = await this.postModel.findById(id);
-    console.log(user, user?._id);
     if(!post){
       throw new Error('updatePostLikeStatus: post not found')
     }

@@ -9,7 +9,6 @@ import { UserModel } from "../domain/users.entity";
 import { InputUserDto } from "../api/input-dto/input-user-dto";
 import { UserViewModel } from "../api/view-dto/users.view-dto";
 import { UserDocument } from "../dto/user.type";
-import e from "express";
 
 @Injectable()
 export class UsersRepository {
@@ -159,7 +158,6 @@ export class UsersRepository {
     //TODO: change DTO;;
     const user = await this.userModel.findOne(userId);
     if(!user){
-      console.log(`user.repository.ts 160`);
       throw new Error(`user not found`)
     }
     const passwordData = await this.createPasswordHash(dto.newPassword);

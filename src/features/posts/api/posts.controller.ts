@@ -11,7 +11,6 @@ import {
   Query,
   Request,
   Res,
-  Scope,
   UnauthorizedException,
   UseGuards
 } from "@nestjs/common";
@@ -29,7 +28,7 @@ import { BasicAuthGuard } from "../../../core/guards/basic.auth.guard";
 import { UsersService } from "../../users/application/users.service";
 import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
 
-@Controller({scope: Scope.DEFAULT, path: 'posts'})
+@Controller( '/posts')
 export class PostsController {
   constructor(
     protected postService: PostService,
@@ -40,9 +39,8 @@ export class PostsController {
   ) {}
 
   @Get(':id')
-  async getOnePost(@Param('id') id: string, @Res() res: Response) {
+  async getOnePost(@Param('id') id: string, @Res() res: Response, @Request() request: any) {
     const post = await this.postService.findPostById(id);
-    //todo: this return array, need fix to postViewModel;
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
@@ -70,7 +68,7 @@ export class PostsController {
     const foundBlog = await this.blogService.findBlogById(dto.blogId);
     if (!foundBlog) {
       return res
-        .status(HttpStatus.NOT_FOUND)
+        .status(HttpStatus.BAD_REQUEST)
         .send([{ message: 'Blog must exist', field: 'blogId' }]);
     }
     const post = await this.postService.createPost({
@@ -127,10 +125,9 @@ export class PostsController {
       userId: user.id,
       userLogin: user.login,
     };
-    console.log(userDTO);
     return this.commentPostService.createCommentForPost(dto, userDTO);
   }
-
+  @UseGuards(BearerAuthGuard)
   @Put(':id/like-status')
   async updatePostLikeStatus(
     @Param('id') id: string,

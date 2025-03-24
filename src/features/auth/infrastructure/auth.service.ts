@@ -99,7 +99,6 @@ export class AuthService {
       }
       user!.emailConfirmation.isConfirmed = false;
       await user!.save();
-      console.log(user);
       const code = await this.usersService.registrateConfirmCode(user!._id);
       //TODO: check this method (updateConfirmationEmailInfo).
      return this.mailService.sendConfirmCode(email, code);

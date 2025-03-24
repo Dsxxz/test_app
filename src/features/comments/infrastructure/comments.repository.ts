@@ -28,7 +28,6 @@ export class CommentsRepository {
       },
     });
 
-    console.log(newComment);
     await this.saveComment(newComment);
     return this.generateToViewModel(newComment);
   }

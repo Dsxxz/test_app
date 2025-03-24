@@ -36,7 +36,6 @@ export class UserQueryRepository {
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean();
-    console.log(user);
 
      user.map((el: UserDocument) => UserViewDto.mapToView(el));
     return Paginator.get({
