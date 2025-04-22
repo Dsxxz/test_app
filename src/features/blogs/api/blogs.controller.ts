@@ -19,13 +19,14 @@ import { BlogsViewModel } from './view-dto/blogs.view.model';
 import { PostService } from '../../posts/application/posts.service';
 import {
   getPageInfo,
-  InputQueryDto,
-} from '../../../core/dto/pagination/input.query.dto';
+  PaginationQueryDto,
+} from '../../../core/dto/pagination/paginationQueryDto';
 import { Paginator } from '../../../core/dto/pagination/paginator';
 import { BlogQueryRepo } from '../infrastructure/blog.query.repo';
 import { PostQueryRepo } from '../../posts/infrastructure/posts.query.repo';
 import { BasicAuthGuard } from '../../../core/guards/basic.auth.guard';
 import { ConvertBlogToViewModel } from "../application/helpers/convertBlogToViewModel";
+import { IdDto } from "../../../id.dto";
 
 @Controller('/blogs')
 export class BlogsController {
@@ -37,21 +38,21 @@ export class BlogsController {
   ) {}
 
   @Get(':id')
-  async findOneBlog(@Param('id') id: string, @Res() res: Response) {
-    const blog = await this.blogService.findOne(id);
+  async findOneBlog(@Param() params: IdDto, @Res() res: Response) {
+    const blog = await this.blogService.findOne(params.id);
     if (!blog) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
     return res.status(HttpStatus.OK).send(blog);
   }
   @Get()
-  async findAllBlogs(@Query() dto: Partial<InputQueryDto>) {
+  async findAllBlogs(@Query() dto: Partial<PaginationQueryDto>) {
     const pageInfo = getPageInfo(dto);
     const totalCount = await this.blogService.getTotalCount(dto.searchNameTerm);
     //Todo:: move to another repository for getting totalCount;
 
     const blogs = await this.blogQueryRepo.findByQuery(
-      pageInfo as InputQueryDto,
+      pageInfo as PaginationQueryDto,
     );
     if (!blogs) {
       return Paginator.get({
@@ -128,7 +129,7 @@ export class BlogsController {
   async findPostsForBlog(
     @Param('id') id: string,
     @Res() res: Response,
-    @Query() dto: Partial<InputQueryDto>,
+    @Query() dto: Partial<PaginationQueryDto>,
   ) {
     const blog = await this.blogService.findBlogById(id);
     if (!blog) {
@@ -137,7 +138,7 @@ export class BlogsController {
     const pageInfo = getPageInfo(dto);
     const totalCount = await this.postService.getTotalCount(id);
     const posts = await this.postQueryRepo.findByQuery(
-      pageInfo as InputQueryDto,
+      pageInfo as PaginationQueryDto,
       id,
     );
     if (!posts) {

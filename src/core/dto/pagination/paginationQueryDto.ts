@@ -1,6 +1,6 @@
 import { EnumDirection } from './enum.direction';
 
-export type InputQueryDto = {
+export type PaginationQueryDto = {
   pageNumber: number;
   pageSize: number;
   sortBy: string;
@@ -16,7 +16,7 @@ export type QueryPostDto = {
   searchNameTerm: string;
   totalCount: number;
 };
-export function getPageInfo(dto: Partial<InputQueryDto>) {
+export function getPageInfo(dto: Partial<PaginationQueryDto>) {
   const pageNumber = dto.pageNumber || 1;
   const pageSize = dto?.pageSize || 10;
   const sortBy = dto?.sortBy || 'createdAt';

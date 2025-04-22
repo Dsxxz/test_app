@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { InputQueryDto } from '../../../core/dto/pagination/input.query.dto';
+import { PaginationQueryDto } from '../../../core/dto/pagination/paginationQueryDto';
 import { BlogModel } from '../domain/blogs.entity';
 import { EnumDirection } from '../../../core/dto/pagination/enum.direction';
 import { InjectModel } from '@nestjs/mongoose';
@@ -11,7 +11,7 @@ export class BlogQueryRepo {
   constructor(
     @InjectModel(BlogModel.name) private blogModel: Model<BlogDocument>,
   ) {}
-  async findByQuery(dto: InputQueryDto): Promise<BlogDocument[]> {
+  async findByQuery(dto: PaginationQueryDto): Promise<BlogDocument[]> {
     //Todo: change the input data processing;
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
     const filter = dto.searchNameTerm

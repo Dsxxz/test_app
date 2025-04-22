@@ -20,7 +20,7 @@ export class UsersService {
     const user = await this.usersRepository.findUserById(new ObjectId(userId));
     return user
       ? {
-          id: user.id,
+          id: user._id.toString(),
           login: user.login,
           email: user.email,
           createdAt: user.createdAt,

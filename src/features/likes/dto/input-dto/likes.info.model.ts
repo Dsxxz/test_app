@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { LikeEnum } from '../../dto/likes.enum.model';
-import { NewLikeModel, NewLikeSchema } from "../../dto/newLike.type";
+import { NewLikeModel, NewLikeSchema } from "../newLike.type";
 
 @Schema()
 export class LikePostInfoType {
@@ -8,10 +7,9 @@ export class LikePostInfoType {
   likesCount: string[];
   @Prop([String])
   dislikeCount: string[];
-  @Prop({ type: String, default: LikeEnum.None })
-  myStatus: string;
   @Prop({type: [NewLikeSchema], required: true})
   newestLikes:NewLikeModel[]
 }
 
 export const LikeInfoSchema = SchemaFactory.createForClass(LikePostInfoType);
+//todo: change naming: files, folders, entities/models;

@@ -6,7 +6,7 @@ export type QueryDto = {
   sortBy: string;
   sortDirection: EnumDirection;
   searchLoginTerm: string;
-  searchEmailTerm: string;
+  searchEmailTerm: string;//todo:ask about mix it with PaginationQueryDto
 };
 export function getPageInfo(dto: Partial<QueryDto>) {
   const pageNumber = dto.pageNumber || 1;

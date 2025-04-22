@@ -1,15 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../constants/jwtConstants';
-import bcrypt from 'bcrypt';
-import { MailAdapter } from '../../../infrastructure/mail.adapter';
-import { RegistrationUserDTO } from '../dto/registration-user-DTO';
-import { ObjectId } from 'mongodb';
-import { UsersService } from '../../users/application/users.service';
+import { BadRequestException, Injectable, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { jwtConstants } from "../constants/jwtConstants";
+import bcrypt from "bcrypt";
+import { MailAdapter } from "../../../infrastructure/mail.adapter";
+import { RegistrationUserDTO } from "../dto/registration-user-DTO";
+import { ObjectId } from "mongodb";
+import { UsersService } from "../../users/application/users.service";
 
 @Injectable()
 export class AuthService {
@@ -46,7 +42,7 @@ export class AuthService {
   async loginUser(userPayload: any) {
     const payload: { username: string; sub: string } = {
       username: userPayload.login,
-      sub: userPayload.id,
+      sub: userPayload._id.toString(),
     };
     const refreshToken = this.jwtService.sign(payload, {
       secret: jwtConstants.refreshTokenSecret,
@@ -54,7 +50,7 @@ export class AuthService {
     });
     const accessToken = this.jwtService.sign(payload, {
       secret: jwtConstants.accessTokenSecret,
-      expiresIn: '5m',
+      expiresIn: '50m',
     });
     return { refreshToken, accessToken };
   }

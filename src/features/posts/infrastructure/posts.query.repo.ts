@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import {
-  InputQueryDto,
+  PaginationQueryDto,
   QueryPostDto,
-} from '../../../core/dto/pagination/input.query.dto';
+} from '../../../core/dto/pagination/paginationQueryDto';
 import { PostRepository } from './posts.repository';
 import { PostModel } from '../domain/posts.entity';
 import { PostViewModel } from '../api/view-dto/post.view.model';
@@ -14,7 +14,7 @@ export class PostQueryRepo {
     @Inject(PostRepository) private readonly postRepository: PostRepository,
   ) {}
   async findByQuery(
-    dto: InputQueryDto,
+    dto: PaginationQueryDto,
     blogId?: string,
   ): Promise<PostViewModel[]> {
     const posts = await this.postRepository.findByQuery(dto, blogId);
@@ -29,7 +29,7 @@ export class PostQueryRepo {
     return this.postRepository.convertToViewPagination(dto, items);
   }
 
-  async getPageInfo(dto: InputQueryDto): Promise<QueryPostDto> {
+  async getPageInfo(dto: PaginationQueryDto): Promise<QueryPostDto> {
     return await this.postRepository.getPageInfo(dto);
   }
 

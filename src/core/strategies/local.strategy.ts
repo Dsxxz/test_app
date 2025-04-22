@@ -18,3 +18,4 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     return user;
   }
 }
+//todo: this strategy is not used; need add or delete it;

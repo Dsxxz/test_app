@@ -18,7 +18,7 @@ export class UsersRepository {
 
   async createUser(createUserDto: InputUserDto): Promise<UserViewModel> {
     const passwordData = await this.createPasswordHash(createUserDto.password)
-    const createUser: UserModel = await UserModel.createInstance({
+    const createUser = await UserModel.createInstance({
       ...createUserDto,
       userPasswordHash: passwordData.passwordHash,
       userPasswordSalt: passwordData.passwordSalt,

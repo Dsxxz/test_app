@@ -37,12 +37,12 @@ export class UserQueryRepository {
       .limit(pageSize)
       .lean();
 
-     user.map((el: UserDocument) => UserViewDto.mapToView(el));
+    const res =  user.map((el: UserDocument) => UserViewDto.mapToView(el));
     return Paginator.get({
       pageNumber: pageNumber,
       pageSize: pageSize,
       totalCount: user.length,
-      items: user,
+      items: res,
     });
   }
 }

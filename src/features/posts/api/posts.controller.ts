@@ -15,10 +15,10 @@ import {
   UnauthorizedException,
   UseGuards
 } from "@nestjs/common";
-import {  Response } from "express";
+import { Response } from "express";
 import { PostService } from "../application/posts.service";
 import { PostsModelDto } from "../dto/posts.model.dto";
-import { InputQueryDto } from "../../../core/dto/pagination/input.query.dto";
+import { PaginationQueryDto } from "../../../core/dto/pagination/paginationQueryDto";
 import { BlogService } from "../../blogs/application/blogs.service";
 import { PostQueryRepo } from "../infrastructure/posts.query.repo";
 import { CommentCreateDTO } from "../../comments/api/input-dto/comment.create.dto";
@@ -28,6 +28,8 @@ import { BearerAuthGuard } from "../../../core/guards/bearer.guard";
 import { BasicAuthGuard } from "../../../core/guards/basic.auth.guard";
 import { UsersService } from "../../users/application/users.service";
 import { UpdateLikeDto } from "../../likes/dto/update.like.DTO";
+import { CurrentUserId } from "../../../core/decorators/currentUserIdFromHeaders.decorator";
+import { PostViewModel } from "./view-dto/post.view.model";
 
 @Controller( '/posts')
 export class PostsController {
@@ -51,17 +53,16 @@ export class PostsController {
   }
 
   @Get()
-  async findAllPosts(@Query() dto: InputQueryDto, @Res() res: Response, @Req() request: any) {
+  async findAllPosts(@Query() dto: PaginationQueryDto, @Res() res: Response, @CurrentUserId() currentUserId?: any,) {
     const queryPostDto = await this.postQueryRepo.getPageInfo(dto);
+    console.log("req.user", currentUserId)
     const posts: PostsModelDto[] =
       await this.postQueryRepo.findByQuery(queryPostDto);
     if (!posts) res.sendStatus(HttpStatus.NOT_FOUND);
-    const result =
-     await this.postQueryRepo.convertToViewModel(posts);
     const result1 = await this.postQueryRepo.convertToViewPagination(
       queryPostDto,
-      result ,
-    );
+      posts as  PostViewModel[]
+    )
     return res.send(result1);
   }
 
@@ -136,17 +137,20 @@ export class PostsController {
     @Param('id') id: string,
     @Body() likeStatus: UpdateLikeDto,
     @Res() res: Response,
-    @Req() req: any,
+    @CurrentUserId() currentUserId: any,
   ) {
     const post = await this.postService.findPostById(id);
     if (!post) {
       return res.sendStatus(HttpStatus.NOT_FOUND);
     }
-    if(!req.user){
+    // ищем юзера по current id
+    const user = await this.userService.findUserById(currentUserId.id);
+    //проверяем есть ли у нас такой юзер
+    if(!currentUserId || !user){
       throw new HttpException('incorrect credential', HttpStatus.UNAUTHORIZED)
     }
-    return this.postService.updatePostLikeStatus(post.id, likeStatus, req.user);
+    const result = await this.postService.updatePostLikeStatus(post.id, likeStatus, { userId:currentUserId.id, login: user.login });
+    return res.status(204).send(result)
   }
-  //todo: create endpoint: post/:id/like-status;
   //todo: take userId from JWT;
 }

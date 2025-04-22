@@ -5,7 +5,7 @@ import {
   CommentModel,
   CommentSchema,
 } from '../features/comments/domain/comment.entity';
-import { LikeInfoSchema, LikePostInfoType } from "../features/likes/api/input-dto/likes.info.model";
+import { LikeInfoSchema, LikePostInfoType } from "../features/likes/dto/input-dto/likes.info.model";
 
 export const models = [
   { name: UserModel.name, schema: UserSchema },

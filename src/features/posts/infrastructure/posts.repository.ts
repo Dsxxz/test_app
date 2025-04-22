@@ -4,7 +4,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { PostDocument, PostModel } from "../domain/posts.entity";
 import { PostsModelDto } from "../dto/posts.model.dto";
 import { EnumDirection } from "../../../core/dto/pagination/enum.direction";
-import { getPageInfo, InputQueryDto, QueryPostDto } from "../../../core/dto/pagination/input.query.dto";
+import { getPageInfo, PaginationQueryDto, QueryPostDto } from "../../../core/dto/pagination/paginationQueryDto";
 import { NewLikeViewModel, PostViewModel } from "../api/view-dto/post.view.model";
 import { LikeEnum } from "../../likes/dto/likes.enum.model";
 import { ObjectId } from "mongodb";
@@ -28,7 +28,7 @@ export class PostRepository {
     post.id = post._id.toString();
     post.blogName = blogName;
     post.blogId = dto.blogId;
-    post.extendedLikesInfo = {likesCount:[],dislikeCount:[],myStatus:LikeEnum.None, newestLikes: []  }
+    post.extendedLikesInfo = {likesCount:[],dislikeCount:[], newestLikes: []  }
     return await this.savePost(post);
   }
 
@@ -58,7 +58,7 @@ export class PostRepository {
     return posts.length;
   }
 
-  async findByQuery(dto: InputQueryDto, blogId?: string) {
+  async findByQuery(dto: PaginationQueryDto, blogId?: string) {
     const sd = dto.sortDirection === EnumDirection.asc ? 1 : -1;
     const filter = blogId ? { blogId: blogId } : {};
     return this.postModel
@@ -75,9 +75,16 @@ export class PostRepository {
   convertToViewModelUtility(post: PostModel, userId?: string): PostViewModel {
     const newestLikes = post.extendedLikesInfo.newestLikes;
     const lastThreeLikes: NewLikeViewModel[] = [];
-        if(newestLikes){
+    let statusLike = LikeEnum.None;
+
+        if(Array.isArray(newestLikes) && newestLikes.length > 0){
+          console.log("101111newestLikes",newestLikes);
+          console.log((newestLikes[0].addedAt) instanceof Date);
+          console.log(newestLikes[0].addedAt);
           const filteredLikes = newestLikes
-            .sort((a, b) => b.addedAt.getTime() - a.addedAt.getTime())
+            .sort((a, b) => {
+              return a.addedAt > b.addedAt ? 1 : -1;
+            })
             .map(el => {
               return {
                 addedAt: el.addedAt.toISOString(),
@@ -89,13 +96,13 @@ export class PostRepository {
         }
     if(userId){
       const userLike = post.extendedLikesInfo.dislikeCount.includes(userId);
-      if(userLike)post.extendedLikesInfo.myStatus = LikeEnum.Like;
+      if(userLike)statusLike = LikeEnum.Like;
       const userDislike = post.extendedLikesInfo.likesCount.includes(userId);
-      if(userDislike)post.extendedLikesInfo.myStatus = LikeEnum.Dislike;
+      if(userDislike)statusLike = LikeEnum.Dislike;
     }
     else{
-      post.extendedLikesInfo.myStatus = LikeEnum.None;
-    }
+      statusLike = LikeEnum.None;
+    }//todo: mapping to view model
     return {
       id: post.id,
       title: post.title,
@@ -107,13 +114,13 @@ export class PostRepository {
       extendedLikesInfo: {
         likesCount: post.extendedLikesInfo.likesCount?.length || 0,
         dislikesCount: post.extendedLikesInfo.dislikeCount?.length || 0,
-        myStatus: post.extendedLikesInfo.myStatus as LikeEnum,
+        myStatus: statusLike as LikeEnum,
         newestLikes: lastThreeLikes,
       },
     };
   }
-  async convertToViewModel(posts: PostModel[], userId?: string):Promise< PostViewModel[]  >{
-    return  posts.map((el) => this.convertToViewModelUtility(el,userId));
+   convertToViewModel(posts: PostModel[], userId?: string):PostViewModel[]{
+    return posts.map((el) => this.convertToViewModelUtility(el,userId));
   }
 
   convertToViewPagination(
@@ -128,7 +135,7 @@ export class PostRepository {
     });
   }
 
-  async getPageInfo(dto: InputQueryDto): Promise<QueryPostDto> {
+  async getPageInfo(dto: PaginationQueryDto): Promise<QueryPostDto> {
     const pageInfo = getPageInfo(dto);
     const totalCount = await this.getTotalCount();
     return {
@@ -141,57 +148,60 @@ export class PostRepository {
     };
   }
 
-  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user: any) {
+  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user: {userId: string, login: string}) {
     const post = await this.postModel.findById(id);
     if(!post){
       throw new Error('updatePostLikeStatus: post not found')
     }
-    if(!user || !user.id){
+    if(!user || !user.userId || !user.login){
       //todo: change return type
-      return post;
+      //todo: change this error
+      throw new Error('updatePostLikeStatus: user not found');
     }
 
-    const dislikeIndex = post.extendedLikesInfo.dislikeCount.indexOf(user.id);
-    const likeIndex = post.extendedLikesInfo.likesCount.indexOf(user.id);
+    const dislikeIndex = post.extendedLikesInfo.dislikeCount.indexOf(user.userId);
+    const likeIndex = post.extendedLikesInfo.likesCount.indexOf(user.userId);
 
     switch (likeStatus.likeStatus) {
 
       case LikeEnum.None:
-        if(dislikeIndex !==-1){
+        if(dislikeIndex !== -1){
+          //todo: delete from array newestLikes
+
           post.extendedLikesInfo.dislikeCount.splice(dislikeIndex, 1);
         }
-        if(likeIndex !==-1){
-          post.extendedLikesInfo.dislikeCount.splice(likeIndex, 1);
+        if(likeIndex !== -1){
+          post.extendedLikesInfo.likesCount.splice(likeIndex, 1);
         }
         break;
 
       case LikeEnum.Like:
-        if (!post.extendedLikesInfo.likesCount.includes(user.id)) {
-          post.extendedLikesInfo.likesCount.push(user.id);
+        if (!post.extendedLikesInfo.likesCount.includes(user.userId)) {
+          post.extendedLikesInfo.likesCount.push(user.userId);
+          //todo change to string type in NewLikeModel 'userId: new ObjectId(user.id)'
+          const newLike:NewLikeModel = { addedAt:new Date(),userId:  ObjectId.createFromHexString(user.userId), login: user.login};
+          post.extendedLikesInfo.newestLikes.push(newLike);
         }
         if(dislikeIndex !==-1){
           post.extendedLikesInfo.dislikeCount.splice(dislikeIndex, 1);
         }
-        const newLike:NewLikeModel = { addedAt:new Date(),userId: new ObjectId(user.id), login: user.login};
-        post.extendedLikesInfo.newestLikes.push(newLike);
-        post.extendedLikesInfo.myStatus = LikeEnum.Like;
+
         break;
 
       case LikeEnum.Dislike:
-        if(!post.extendedLikesInfo.dislikeCount.includes(user.id)){
-          post.extendedLikesInfo.dislikeCount.push(user.id);
+        if(!post.extendedLikesInfo.dislikeCount.includes(user.userId)){
+          post.extendedLikesInfo.dislikeCount.push(user.userId);
+          //todo: delete from array newestLikes
         }
         if(likeIndex !==-1){
           post.extendedLikesInfo.dislikeCount.splice(likeIndex, 1);
         }
-        post.extendedLikesInfo.myStatus = LikeEnum.Dislike;
         break;
 
 
       default: console.error('update post like status: unknown like status')
 
     }
-
     return this.savePost(post);
   }
 }

@@ -11,7 +11,7 @@ import {
 import { AuthService } from '../infrastructure/auth.service';
 import { CreateAuthLoginDto } from '../dto/create-auth-login-dto';
 import { Response } from 'express';
-import { CurrentUserId } from '../../../core/decorators/user.decorator';
+import { CurrentUserId } from '../../../core/decorators/currentUserIdFromHeaders.decorator';
 import { RegistrationUserDTO } from '../dto/registration-user-DTO';
 import { PasswordRecoveryEmailDTO, RegistrationEmailDTO } from "../dto/registration-email-DTO";
 import { BearerAuthGuard } from '../../../core/guards/bearer.guard';
@@ -58,7 +58,9 @@ export class AuthController {
   @Get('me')
   async getUser(@CurrentUserId() currentUserId: any) {
     const user = await this.userService.findUserById(currentUserId);
-    return { email: user?.email, login: user?.login, userId: user?.id };
+    console.log('currentUserId/me', currentUserId);
+    //todo: pay attention to this currentUserId, there is object {id: string}
+    return { email: user?.email, login: user?.login, userId: currentUserId.id };
   }
 
   @Post('registration-email-resending')

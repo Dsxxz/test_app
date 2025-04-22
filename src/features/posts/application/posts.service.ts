@@ -40,7 +40,7 @@ export class PostService {
     return this.postRepository.deletePost(new ObjectId(id));
   }
 
-  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user: any) {
+  async updatePostLikeStatus(id: string, likeStatus: UpdateLikeDto, user: {userId: string, login: string}) {
     return this.postRepository.updatePostLikeStatus(id,likeStatus, user);
   }
 }

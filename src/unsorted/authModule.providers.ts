@@ -29,5 +29,5 @@ export const authProviders= [
   UsersService,
   JwtService,
   UsersRepository,
-  JwtInterceptor
+  JwtInterceptor,
 ];

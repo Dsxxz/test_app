@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { CreateUserType } from '../dto/create-user-type';
 import { User, ConfirmSchema } from "../dto/user.schema";
 import { ObjectId } from "mongodb";
+import { UserDocument } from "../dto/user.type";
 
 
 @Schema()
@@ -33,7 +34,7 @@ export class UserModel   {
     user.emailConfirmation = {confirmationCode: dto.emailConfirmation.confirmationCode,
       isConfirmed: dto.emailConfirmation.isConfirmed,
       expirationDate: dto.emailConfirmation.expirationDate,}
-    return user;
+    return user as UserDocument;
   }}
 
 
